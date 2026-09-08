@@ -1,0 +1,493 @@
+/* =========================
+   RESET
+========================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+}
+
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar {
+    position: fixed;
+
+    top: 0;
+    left: -250px;
+
+    width: 250px;
+    height: 100vh;
+
+    background: white;
+
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+
+    transition: 0.3s;
+
+    z-index: 1000;
+}
+
+.sidebar.show {
+    left: 0;
+}
+
+
+/* =========================
+   LOGO
+========================= */
+
+.logo-area {
+    text-align: center;
+    padding: 20px;
+}
+
+.logo-area img {
+    width: 80px;
+    height: 80px;
+
+    object-fit: contain;
+}
+
+.logo-area h1 {
+    margin-top: 10px;
+
+    font-size: 24px;
+
+    color: #163e73;
+}
+
+
+/* =========================
+   MENU
+========================= */
+
+.menu {
+    margin-top: 10px;
+}
+
+.menu a {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin: 5px 15px;
+
+    padding: 13px;
+
+    color: #555 !important;
+
+    text-decoration: none !important;
+
+    border-radius: 8px;
+
+    transition: 0.2s;
+}
+
+.menu a:hover,
+.menu a.active {
+    background: #163e73;
+
+    color: white !important;
+}
+
+
+/* =========================
+   MAIN
+========================= */
+
+.main-content {
+    width: 100%;
+
+    min-height: 100vh;
+}
+
+
+/* =========================
+   TOPBAR
+========================= */
+
+.topbar {
+    height: 70px;
+
+    background: white;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0 25px;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+
+/* =========================
+   TOMBOL 3 GARIS
+========================= */
+
+.menu-button {
+    width: 42px;
+    height: 42px;
+
+    border: none;
+
+    background: transparent;
+
+    font-size: 24px;
+
+    color: #163e73;
+
+    cursor: pointer;
+
+    margin-right: 20px;
+}
+
+.menu-button:hover {
+    background: #f0f4f9;
+
+    border-radius: 6px;
+}
+
+
+/* JUDUL */
+
+.topbar h2 {
+    color: #163e73;
+
+    font-size: 22px;
+}
+
+
+/* =========================
+   ADMIN
+========================= */
+
+.admin {
+    margin-left: auto;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+}
+
+.admin-icon {
+    width: 35px;
+    height: 35px;
+
+    border-radius: 50%;
+
+    background: #edf4ff;
+
+    color: #163e73;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* =========================
+   CONTENT
+========================= */
+
+.content {
+    padding: 30px;
+}
+
+
+/* =========================
+   ACTION
+========================= */
+
+.content-header {
+    display: flex;
+
+    justify-content: flex-end;
+
+    margin-bottom: 20px;
+}
+
+.content-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+/* =========================
+   SEARCH
+========================= */
+
+.search-box {
+    width: 240px;
+
+    height: 40px;
+
+    background: white;
+
+    border: 1px solid #ddd;
+
+    border-radius: 7px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 0 12px;
+}
+
+.search-box i {
+    color: #777;
+}
+
+.search-box input {
+    width: 100%;
+
+    border: none;
+
+    outline: none;
+
+    font-size: 14px;
+}
+
+
+/* =========================
+   BUTTON TAMBAH
+========================= */
+
+.btn-tambah {
+    height: 40px;
+
+    padding: 0 16px;
+
+    border: none;
+
+    border-radius: 7px;
+
+    background: #1769e0;
+
+    color: white;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    font-size: 14px;
+}
+
+.btn-tambah:hover {
+    background: #1258c0;
+}
+
+
+/* =========================
+   TABLE
+========================= */
+
+.table-container {
+    width: 100%;
+
+    background: white;
+
+    border-radius: 10px;
+
+    overflow-x: auto;
+
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.table-container table {
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+.table-container thead {
+    background: #edf4ff;
+}
+
+.table-container th {
+    padding: 15px;
+
+    text-align: left;
+
+    font-size: 13px;
+
+    color: #334155;
+
+    font-weight: 600;
+}
+
+.table-container td {
+    padding: 14px 15px;
+
+    border-top: 1px solid #eee;
+
+    font-size: 13px;
+
+    color: #555;
+}
+
+.table-container tbody tr:hover {
+    background: #f8fafc;
+}
+
+
+/* =========================
+   AKSI
+========================= */
+
+.aksi {
+    white-space: nowrap;
+}
+
+.btn-edit,
+.btn-hapus {
+    width: 32px;
+    height: 32px;
+
+    border: none;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+}
+
+.btn-edit {
+    background: #e8f1ff;
+
+    color: #1769e0;
+}
+
+.btn-hapus {
+    background: #ffe8eb;
+
+    color: #e53935;
+}
+
+.btn-edit:hover {
+    background: #1769e0;
+
+    color: white;
+}
+
+.btn-hapus:hover {
+    background: #e53935;
+
+    color: white;
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+.table-footer {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-top: 15px;
+
+    color: #666;
+
+    font-size: 13px;
+}
+
+
+/* =========================
+   PAGINATION
+========================= */
+
+.pagination {
+    display: flex;
+
+    gap: 5px;
+}
+
+.pagination button {
+    width: 32px;
+    height: 32px;
+
+    border: 1px solid #ddd;
+
+    background: white;
+
+    border-radius: 5px;
+
+    cursor: pointer;
+}
+
+.pagination button:hover {
+    background: #edf4ff;
+}
+
+.pagination .active-page {
+    background: #1769e0;
+
+    color: white;
+
+    border-color: #1769e0;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+
+    .content {
+        padding: 20px 15px;
+    }
+
+    .content-actions {
+        width: 100%;
+    }
+
+    .search-box {
+        width: 100%;
+    }
+
+    .content-header {
+        justify-content: stretch;
+    }
+
+    .admin span,
+    .admin > i {
+        display: none;
+    }
+
+    .table-footer {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 10px;
+    }
+}

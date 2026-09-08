@@ -1,0 +1,801 @@
+body{
+    background:#f5f7fb;
+    font-family:'Segoe UI',sans-serif;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#f3f5fb;
+    font-family:'Segoe UI',sans-serif;
+}
+
+.wrapper{
+    display:flex;
+}
+
+.sidebar{
+
+    width:250px;
+
+    height:100vh;
+
+    background:white;
+
+    box-shadow:0 0 15px rgba(0,0,0,.08);
+
+    position:fixed;
+
+}
+
+.logo{
+
+    text-align:center;
+
+    padding:25px;
+
+}
+
+.logo img{
+
+    width:90px;
+
+    height:90px;
+
+    border-radius:50%;
+
+}
+
+.logo h2{
+
+    margin-top:10px;
+
+    color:#163E73;
+
+}
+
+.sidebar ul{
+
+    list-style:none;
+
+    margin-top:20px;
+
+}
+
+.sidebar ul li{
+
+    margin:8px 15px;
+
+}
+
+.sidebar ul li a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    text-decoration:none;
+
+    color:#555;
+
+    padding:15px;
+
+    border-radius:12px;
+
+    transition:.3s;
+
+}
+
+.sidebar ul li a:hover{
+
+    background:#163E73;
+
+    color:white;
+
+}
+
+.active a{
+
+    background:#163E73;
+
+    color:white !important;
+
+}
+
+.content{
+
+    margin-left:250px;
+
+    width:100%;
+
+}
+
+.navbar{
+
+    background:white;
+
+    padding:18px 30px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    box-shadow:0 2px 8px rgba(0,0,0,.05);
+
+}
+
+.left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+}
+
+.left i{
+
+    font-size:22px;
+
+    color:#163E73;
+
+}
+
+.right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+}
+
+.right i{
+
+    font-size:28px;
+
+    color:#163E73;
+
+}
+
+.container-fluid{
+    padding:30px;
+}
+
+.card{
+    border-radius:15px;
+}
+
+.card-body{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.card h6{
+    color:#666;
+    font-size:16px;
+}
+
+.card h2{
+    font-weight:bold;
+    color:#163E73;
+}
+
+.container-fluid{
+    padding:30px;
+}
+
+.card{
+    border-radius:15px;
+}
+
+.card-body{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.card-body h6{
+    color:#666;
+}
+
+.card-body h2{
+    color:#163E73;
+    font-weight:bold;
+}
+
+body {
+    overflow-x: hidden;
+    background-color: #f4f6f9;
+}
+
+/* Sidebar Layout */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #1a3d6d;
+    color: #fff;
+    z-index: 100;
+}
+
+.sidebar a {
+    color: #cbd5e1;
+    text-decoration: none;
+    padding: 12px 20px;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidebar a:hover, .sidebar li.active a {
+    background-color: #0f2744;
+    color: #fff;
+}
+
+/* Sidebar awalnya tersembunyi */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -340px;
+    width: 340px;
+    height: 100vh;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+/* Sidebar muncul */
+.sidebar.active {
+    left: 0;
+}
+
+/* Konten utama saat sidebar tertutup */
+.content {
+    margin-left: 0;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+/* Konten bergeser ketika sidebar dibuka */
+.content.sidebar-open {
+    margin-left: 340px;
+}
+
+/* Tombol garis 3 */
+.menu-btn {
+    border: none;
+    background: transparent;
+    font-size: 22px;
+    cursor: pointer;
+    padding: 0;
+    margin-right: 15px;
+    color: #333;
+}
+
+/* Efek ketika mouse diarahkan */
+.menu-btn:hover {
+    color: #0d6efd;
+}
+
+/* =====================================================
+   DATA PELANGGAN
+   ===================================================== */
+
+/* SIDEBAR */
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -260px;
+
+    width: 250px;
+    height: 100vh;
+
+    background: white;
+
+    box-shadow: 0 0 15px rgba(0,0,0,.08);
+
+    z-index: 1000;
+
+    transition: left 0.3s ease;
+
+    overflow-y: auto;
+}
+
+
+/* SIDEBAR MUNCUL SAAT ☰ DIKLIK */
+
+.sidebar.show {
+    left: 0;
+}
+
+
+/* LOGO SIDEBAR */
+
+.logo-area {
+    text-align: center;
+
+    padding: 20px;
+}
+
+.logo-area img {
+    width: 75px;
+    height: 75px;
+
+    object-fit: contain;
+
+    border-radius: 50%;
+}
+
+.logo-area h1 {
+    margin-top: 8px;
+
+    font-size: 25px;
+
+    font-weight: 500;
+
+    color: #163E73;
+}
+
+
+/* MENU SIDEBAR */
+
+.menu {
+    margin-top: 10px;
+}
+
+.menu a {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin: 7px 15px;
+
+    padding: 13px 15px;
+
+    text-decoration: none;
+
+    color: #555;
+
+    border-radius: 10px;
+
+    transition: .3s;
+}
+
+.menu a:hover {
+    background: #163E73;
+
+    color: white;
+}
+
+.menu a.active {
+    background: #163E73;
+
+    color: white;
+}
+
+.menu a i {
+    width: 20px;
+
+    text-align: center;
+}
+
+
+/* =====================================================
+   KONTEN UTAMA PELANGGAN
+   ===================================================== */
+
+.main-content {
+    width: 100%;
+
+    min-height: 100vh;
+
+    margin-left: 0;
+
+    transition: margin-left 0.3s ease;
+
+    background: #f4f6f9;
+}
+
+
+/* KETIKA SIDEBAR DIBUKA */
+
+.main-content.sidebar-open {
+    margin-left: 250px;
+
+    width: calc(100% - 250px);
+}
+
+
+/* =====================================================
+   TOPBAR
+   ===================================================== */
+
+.topbar {
+    height: 70px;
+
+    background: white;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0 25px;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+
+
+/* TOMBOL ☰ */
+
+.menu-button {
+    border: none;
+
+    background: transparent;
+
+    font-size: 22px;
+
+    cursor: pointer;
+
+    color: #163E73;
+
+    margin-right: 20px;
+
+    padding: 5px;
+}
+
+.menu-button:hover {
+    color: #0d6efd;
+}
+
+
+/* JUDUL */
+
+.topbar h2 {
+    margin: 0;
+
+    font-size: 23px;
+
+    color: #163E73;
+
+    font-weight: 600;
+}
+
+
+/* ADMIN */
+
+.admin {
+    margin-left: auto;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    color: #333;
+
+    font-size: 14px;
+}
+
+.admin-icon {
+    width: 35px;
+    height: 35px;
+
+    border-radius: 50%;
+
+    background: #f1f4f8;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #163E73;
+}
+
+
+/* =====================================================
+   CONTENT
+   ===================================================== */
+
+.main-content .content {
+    padding: 30px;
+
+    margin-left: 0;
+
+    width: 100%;
+}
+
+
+/* HEADER CONTENT */
+
+.content-header {
+    display: flex;
+
+    justify-content: flex-end;
+
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+.content-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+
+/* =====================================================
+   SEARCH
+   ===================================================== */
+
+.search-box {
+    width: 240px;
+
+    height: 40px;
+
+    background: white;
+
+    border: 1px solid #dbe2ea;
+
+    border-radius: 7px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0 12px;
+
+    gap: 8px;
+}
+
+.search-box i {
+    color: #94a3b8;
+}
+
+.search-box input {
+    width: 100%;
+
+    border: none;
+
+    outline: none;
+
+    font-size: 13px;
+
+    font-family: 'Segoe UI', sans-serif;
+}
+
+
+/* =====================================================
+   TOMBOL TAMBAH
+   ===================================================== */
+
+.btn-tambah {
+    height: 40px;
+
+    padding: 0 17px;
+
+    border: none;
+
+    border-radius: 7px;
+
+    background: #1769e0;
+
+    color: white;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    font-size: 13px;
+}
+
+.btn-tambah:hover {
+    background: #1258bf;
+}
+
+
+/* =====================================================
+   TABLE
+   ===================================================== */
+
+.table-container {
+    width: 100%;
+
+    background: white;
+
+    border-radius: 10px;
+
+    border: 1px solid #e5e7eb;
+
+    overflow-x: auto;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,.03);
+}
+
+.table-container table {
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+.table-container thead {
+    background: #edf4ff;
+}
+
+.table-container th {
+    padding: 15px;
+
+    text-align: left;
+
+    font-size: 12px;
+
+    color: #334155;
+
+    font-weight: 600;
+}
+
+.table-container td {
+    padding: 15px;
+
+    border-top: 1px solid #edf0f4;
+
+    font-size: 13px;
+
+    color: #475569;
+}
+
+.table-container tbody tr:hover {
+    background: #f8fafc;
+}
+
+
+/* =====================================================
+   TOMBOL AKSI
+   ===================================================== */
+
+.aksi {
+    display: flex;
+
+    gap: 8px;
+}
+
+.btn-edit,
+.btn-hapus {
+    width: 32px;
+    height: 32px;
+
+    border: none;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+.btn-edit {
+    background: #eaf2ff;
+
+    color: #1769e0;
+}
+
+.btn-hapus {
+    background: #ffe8eb;
+
+    color: #ef4444;
+}
+
+.btn-edit:hover {
+    background: #dbe9ff;
+}
+
+.btn-hapus:hover {
+    background: #ffd8de;
+}
+
+
+/* =====================================================
+   FOOTER TABEL
+   ===================================================== */
+
+.table-footer {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-top: 15px;
+
+    font-size: 12px;
+
+    color: #64748b;
+}
+
+.pagination {
+    display: flex;
+
+    gap: 5px;
+}
+
+.pagination button {
+    width: 32px;
+    height: 32px;
+
+    border: 1px solid #e2e8f0;
+
+    background: white;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    color: #64748b;
+}
+
+.pagination button:hover {
+    background: #edf4ff;
+}
+
+.pagination .active-page {
+    background: #1769e0;
+
+    color: white;
+
+    border-color: #1769e0;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 768px) {
+
+    .main-content.sidebar-open {
+        margin-left: 0;
+
+        width: 100%;
+    }
+
+    .sidebar {
+        width: 250px;
+    }
+
+    .content-actions {
+        flex-wrap: wrap;
+    }
+
+    .search-box {
+        width: 200px;
+    }
+
+}
