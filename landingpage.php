@@ -154,6 +154,24 @@
         .testi-card img { height: 192px; width: 100%; object-fit: cover; }
         .rating { color: #fbbf24; font-size: .875rem; }
 
+        /* Kontak di footer */
+        .contact-link {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            color: #fff;
+            text-decoration: none;
+            font-size: .875rem;
+            transition: color .2s;
+        }
+        .contact-link:hover { color: var(--brand-mint); }
+        .contact-link img {
+            width: 28px;
+            height: 28px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
         /* Animasi muncul saat scroll */
         .js .reveal { opacity: 0; transform: translateY(32px); transition: opacity .7s ease, transform .7s ease; }
         .js .reveal.show { opacity: 1; transform: none; }
@@ -413,12 +431,40 @@
 
     <!-- ================= FOOTER ================= -->
     <footer class="bg-brand text-white py-4">
-        <div class="reveal container text-center d-md-flex justify-content-md-between align-items-md-center">
-            <div>
-                <p class="font-brand fw-bold fs-5 mb-0">Pet Heaven</p>
-                <p class="text-sm mb-0" style="color: var(--brand-mint);">A Place of Luxury for Your Pets</p>
+        <div class="reveal container">
+            <div class="row align-items-center g-4">
+                <!-- Kiri: nama brand -->
+                <div class="col-md-5 text-center text-md-start">
+                    <p class="font-brand fw-bold fs-5 mb-0">Pet Heaven</p>
+                    <p class="text-sm mb-0" style="color: var(--brand-mint);">A Place of Luxury for Your Pets</p>
+                </div>
+
+                <!-- Kanan: Contact Us -->
+                <div class="col-md-7">
+                    <p class="font-brand fw-bold mb-3 text-center text-md-start">Contact Us</p>
+                    <div class="d-flex flex-wrap justify-content-center justify-content-md-start gap-3 gap-md-4">
+                        <a href="https://wa.me/6285198177701?s=t" target="_blank" rel="noopener" class="contact-link">
+                            <img src="config/assets/images/wa.jpg" alt="WhatsApp">
+                            <span>WhatsApp</span>
+                        </a>
+                        <a href="https://instagram.com/username_kamu" target="_blank" rel="noopener" class="contact-link">
+                            <img src="config/assets/images/ig.jpg" alt="Instagram">
+                            <span>Instagram</span>
+                        </a>
+                        <a href="mailto:emailkamu@gmail.com" class="contact-link">
+                            <img src="config/assets/images/email.jpg" alt="Email">
+                            <span>Email</span>
+                        </a>
+                        <a href="https://maps.app.goo.gl/NbavqgbRc8Y9BhmCA" target="_blank" rel="noopener" class="contact-link">
+                            <img src="config/assets/images/maps.jpg" alt="Lokasi">
+                            <span>Lokasi</span>
+                        </a>
+                    </div>
+                </div>
             </div>
-            <p class="text-xs mt-3 mt-md-0 mb-0" style="color: var(--brand-bg);">&copy; 2026 Pet Heaven. All rights reserved.</p>
+
+            <hr class="my-3 opacity-25">
+            <p class="text-xs mb-0 text-center" style="color: var(--brand-bg);">&copy; 2026 Pet Heaven. All rights reserved.</p>
         </div>
     </footer>
 
