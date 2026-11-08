@@ -8,6 +8,15 @@ if (!isset($_SESSION['id_pelanggan'])) {
     exit();
 }
 
+// Ambil data pemilik berdasarkan akun yang sedang login
+$id_pelanggan = $_SESSION['id_pelanggan'];
+
+$query_pemilik = mysqli_query($koneksi, "
+    SELECT * FROM pelanggan
+    WHERE id_pelanggan = '$id_pelanggan'");
+
+$data_pemilik = mysqli_fetch_assoc($query_pemilik);
+
 // Ambil data layanan dari database sekali untuk dilooping di setiap kartu hewan
 $q_layanan = mysqli_query($koneksi, "SELECT * FROM layanan");
 $list_layanan = [];
@@ -46,21 +55,26 @@ while ($l = mysqli_fetch_assoc($q_layanan)) {
           <div class="row g-3 mb-3">
             <div class="col-md-6">
               <label class="form-label small fw-bold text-muted">Nama Lengkap</label>
-              <input type="text" name="nama_pelanggan" placeholder="Flora" required class="form-control form-control-sm bg-white">
+              <input type="text" name="nama_pelanggan"
+              value="<?= htmlspecialchars($data_pemilik['nama_pelanggan'] ?? '') ?>"
+              required class="form-control form-control-sm bg-white">
             </div>
             <div class="col-md-6">
               <label class="form-label small fw-bold text-muted">Email</label>
-              <input type="email" name="email" placeholder="flora@gmail.com" required class="form-control form-control-sm bg-white">
-            </div>
+              <input type="email" name="email"
+              value="<?= htmlspecialchars($data_pemilik['email'] ?? '') ?>"
+              required class="form-control form-control-sm bg-white">
           </div>
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label small fw-bold text-muted">No. Telepon</label>
-              <input type="tel" name="no_telepon" placeholder="081234567890" required class="form-control form-control-sm bg-white">
+              <input type="tel" name="no_telepon" placeholder="08xxxxxxxxxx" maxlength="12"
+              inputmode="numeric" required class="form-control form-control-sm bg-white">
             </div>
             <div class="col-md-6">
               <label class="form-label small fw-bold text-muted">Alamat Lengkap</label>
-              <input type="text" name="alamat" placeholder="Contoh: Jl. Merdeka No. 12, Malang" required class="form-control form-control-sm bg-white">
+              <input type="text" name="alamat" value="<?= htmlspecialchars($data_pemilik['alamat'] ?? '') ?>" 
+              placeholder="Contoh: Jl. Mawar No. 09, Malang" required class="form-control form-control-sm bg-white">
             </div>
           </div>
         </div>
@@ -126,7 +140,7 @@ while ($l = mysqli_fetch_assoc($q_layanan)) {
                   ?>
                       <div class="col-md-4">
                         <div class="form-check">
-                          <input class="form-check-input addon-check" type="checkbox" name="layanan[]" value="<?= $id_lay; ?>" data-harga="<?= $harga_lay; ?>">
+                          <input class="form-check-input addon-check" type="checkbox" name="layanan[0][]" value="<?= $id_lay; ?>" data-harga="<?= $harga_lay; ?>">
                           <label class="form-check-label small">
                             <?= $nama_lay; ?> (Rp<?= $format_harga; ?>)
                           </label>
@@ -214,6 +228,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnTambahHewan= document.getElementById('btnTambahHewan');
     const containerHewan= document.getElementById('container-hewan');
 
+    // Mengatur nama layanan sesuai urutan kartu hewan
+function aturNamaLayanan() {
+    const semuaHewan = containerHewan.querySelectorAll('.hewan-item');
+
+    semuaHewan.forEach(function(item, index) {
+        const semuaCheckbox = item.querySelectorAll('.addon-check');
+
+        semuaCheckbox.forEach(function(checkbox) {
+            checkbox.name = 'layanan[' + index + '][]';
+        });
+    });
+}
+
     // 1. Fungsi Cek Stok Kamar
     function ambilDataStok() {
         if (!checkinInput || !checkoutInput || !selectKamar) return;
@@ -247,10 +274,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     if (checkinInput && checkoutInput) {
-        checkinInput.addEventListener('change', ambilDataStok);
-        checkoutInput.addEventListener('change', checkoutInput, ambilDataStok);
-        ambilDataStok();
-    }
+    checkinInput.addEventListener('change', ambilDataStok);
+    checkoutInput.addEventListener('change', ambilDataStok);
+    ambilDataStok();
+  }
 
     // 2. Fungsi Hitung Total Harga (Kamar + Layanan Semua Hewan)
     function hitungTotalSemua() {
@@ -271,7 +298,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const selectedOpt = selectKamar.options[selectKamar.selectedIndex];
             hargaKamarPerHari = parseInt(selectedOpt.getAttribute('data-harga')) || 0;
         }
-        let totalKamar = hargaKamarPerHari * lamaHari;
+        const jumlahHewan = containerHewan.querySelectorAll('.hewan-item').length;
+        let totalKamar = hargaKamarPerHari * lamaHari * jumlahHewan;
         document.getElementById('txtTotalKamar').innerText = 'Rp' + new Intl.NumberFormat('id-ID').format(totalKamar);
 
         // Hitung total layanan dari SELURUH hewan (termasuk hewan ke-2, ke-3, dst)
@@ -299,36 +327,59 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 3. Tombol Tambah Hewan Lain
-    if (btnTambahHewan && containerHewan) {
-        btnTambahHewan.addEventListener('click', function() {
-            const itemPertama = containerHewan.querySelector('.hewan-item');
-            if (itemPertama) {
-                const clone = itemPertama.cloneNode(true);
-                
-                // Bersihkan input teks di form baru
-                clone.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => input.value = '');
-                
-                // Hilangkan centang checkbox di form baru
-                clone.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+    // 3. Tombol Tambah Hewan Lain (Maksimal 3 Hewan)
+if (btnTambahHewan && containerHewan) {
 
-                // Tambahkan tombol hapus untuk baris hewan tambahan
-                if (!clone.querySelector('.btn-hapus-hewan')) {
-                    const divHapus = document.createElement('div');
-                    divHapus.className = 'text-end mt-2';
-                    divHapus.innerHTML = `<button type="button" class="btn btn-danger btn-sm btn-hapus-hewan"><i class="bi bi-trash"></i> Hapus Hewan Ini</button>`;
-                    clone.appendChild(divHapus);
+    btnTambahHewan.addEventListener('click', function() {
 
-                    divHapus.querySelector('.btn-hapus-hewan').addEventListener('click', function() {
-                        clone.remove();
-                        hitungTotalSemua(); // Update total harga setelah hewan dihapus
-                    });
-                }
+        // Hitung jumlah hewan
+        const jumlahHewan = containerHewan.querySelectorAll('.hewan-item').length;
 
-                containerHewan.appendChild(clone);
-            }
-        });
-    }
+        // Batasi maksimal 3 hewan
+        if (jumlahHewan >= 3) {
+            alert('Maksimal hanya 3 hewan dalam satu reservasi!');
+            return;
+        }
+
+        const itemPertama = containerHewan.querySelector('.hewan-item');
+
+        if (itemPertama) {
+            const clone = itemPertama.cloneNode(true);
+
+            // Kosongkan input
+            clone.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
+                input.value = '';
+            });
+
+            // Hilangkan centang checkbox
+            clone.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                cb.checked = false;
+            });
+
+            // Tambahkan tombol hapus
+            const divHapus = document.createElement('div');
+            divHapus.className = 'text-end mt-2';
+
+            divHapus.innerHTML = `
+                <button type="button" class="btn btn-danger btn-sm btn-hapus-hewan">
+                    <i class="bi bi-trash"></i> Hapus Hewan Ini
+                </button>
+            `;
+
+            clone.appendChild(divHapus);
+
+            divHapus.querySelector('.btn-hapus-hewan').addEventListener('click', function() {
+              clone.remove();
+              aturNamaLayanan();
+              hitungTotalSemua();
+            });
+
+            containerHewan.appendChild(clone);
+            aturNamaLayanan();
+            hitungTotalSemua();
+        }
+    });
+}
 });
 </script>
 

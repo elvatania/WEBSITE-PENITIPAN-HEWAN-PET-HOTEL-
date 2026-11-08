@@ -29,10 +29,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 if ($update) {
                     // Berhasil! Alihkan otomatis ke halaman riwayat / dashboard user
-                    echo "<script>
-                            alert('Bukti pembayaran berhasil dikirim! Menunggu konfirmasi dari admin.');
-                            window.location='riwayat.php';
-                          </script>";
+                    // Berhasil! Alihkan otomatis ke halaman riwayat / dashboard user
+    echo "<script>
+            alert('Bukti pembayaran berhasil dikirim! Menunggu konfirmasi dari admin.');
+            window.location='../user/riwayat_pesanan.php';
+          </script>";
                     exit();
                 } else {
                     echo "Gagal memperbarui database: " . mysqli_error($koneksi);

@@ -1,42 +1,56 @@
 <?php
+session_start();
 include "../config/koneksi.php";
 
-$id = $_GET['id'] ?? 0;
+// Ambil ID reservasi dari URL
+$id_reservasi = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
-// 1. Ambil data reservasi utama berdasarkan ID yang diklik
-$query = mysqli_query($koneksi, "SELECT reservasi.*, pelanggan.*, kamar.* 
-                                 FROM reservasi 
-                                 JOIN pelanggan ON reservasi.id_pelanggan = pelanggan.id_pelanggan 
-                                 LEFT JOIN kamar ON reservasi.id_kamar = kamar.id_kamar 
-                                 WHERE reservasi.id_reservasi = '$id'");
+// Ambil data reservasi dan pelanggan
+$query = mysqli_query($koneksi, "
+    SELECT reservasi.*, pelanggan.*, kamar.*
+    FROM reservasi
+    JOIN pelanggan
+        ON reservasi.id_pelanggan = pelanggan.id_pelanggan
+    LEFT JOIN kamar
+        ON reservasi.id_kamar = kamar.id_kamar
+    WHERE reservasi.id_reservasi = '$id_reservasi'
+");
+
 $data = mysqli_fetch_assoc($query);
 
+// Cek data reservasi
 if (!$data) {
-    echo "<script>alert('Data tidak ditemukan!'); window.location='index.php';</script>";
+    echo "<script>
+        alert('Data reservasi tidak ditemukan!');
+        window.location='riwayat_pesanan.php';
+    </script>";
     exit();
 }
 
-$id_pelanggan = $data['id_pelanggan'];
-$check_in = $data['check_in'];
-$check_out = $data['check_out'];
-
-// 2. Ambil SEMUA hewan milik pelanggan pada reservasi yang sama (Multi-pet)
-$query_hewan = mysqli_query($koneksi, "SELECT hewan.nama_hewan, hewan.jenis_hewan 
-                                     FROM reservasi 
-                                     JOIN hewan ON reservasi.id_hewan = hewan.id_hewan 
-                                     WHERE reservasi.id_pelanggan = '$id_pelanggan' 
-                                     AND reservasi.check_in = '$check_in' 
-                                     AND reservasi.check_out = '$check_out'");
+// Ambil data hewan
+$query_hewan = mysqli_query($koneksi, "
+    SELECT hewan.nama_hewan, hewan.jenis_hewan
+    FROM reservasi
+    JOIN hewan ON reservasi.id_hewan = hewan.id_hewan
+    WHERE reservasi.id_reservasi = '$id_reservasi'
+");
 
 $daftar_hewan = [];
+
 while ($h = mysqli_fetch_assoc($query_hewan)) {
     $daftar_hewan[] = $h['nama_hewan'] . ' (' . $h['jenis_hewan'] . ')';
 }
 
-$str_hewan = !empty($daftar_hewan) ? implode(', ', $daftar_hewan) : 'Hewan Peliharaan';
+$str_hewan = !empty($daftar_hewan)
+    ? implode(', ', $daftar_hewan)
+    : 'Hewan Peliharaan';
 
-// Format Booking Code yang Konsisten (Contoh: RSV120)
-$booking_code = "RSV" . str_pad($data['id_reservasi'], 3, "0", STR_PAD_LEFT);
+$booking_code = "RSV" . str_pad(
+    $data['id_reservasi'],
+    3,
+    "0",
+    STR_PAD_LEFT
+);
 ?>
 
 <!DOCTYPE html>

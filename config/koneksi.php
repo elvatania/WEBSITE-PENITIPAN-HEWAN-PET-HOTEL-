@@ -1,7 +1,7 @@
 <?php
-$conn=mysqli_connect("localhost","root","","pet_hotel");
+$koneksi=mysqli_connect("localhost","root","","pet_hotel");
 
-if($conn) {
+if($koneksi) {
     echo "";
 }
 ?>
