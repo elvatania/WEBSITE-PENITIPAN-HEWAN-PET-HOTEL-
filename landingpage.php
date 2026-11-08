@@ -203,6 +203,7 @@
                         <li class="nav-item"><a class="nav-link" href="#services">Layanan</a></li>
                         <li class="nav-item"><a class="nav-link" href="#rooms">Kamar</a></li>
                         <li class="nav-item"><a class="nav-link" href="#gallery">Galeri &amp; Testimoni</a></li>
+                        <li class="nav-item"><a class="nav-link" href="user/form_reservasi.php">Reservasi</a></li>
                     </ul>
 
                     <!-- Tombol Aksi (Login & Daftar) -->
@@ -230,7 +231,7 @@
                 </p>
 
                 <div class="mt-4 d-flex flex-wrap justify-content-center justify-content-md-start gap-3">
-                    <a href="daftar.php" class="btn btn-brand btn-lg fw-bold d-inline-flex align-items-center gap-2 shadow">
+                    <a href="user/form_reservasi.php" class="btn btn-brand btn-lg fw-bold d-inline-flex align-items-center gap-2 shadow">
                         <i class="fa-solid fa-calendar-check"></i>
                         <span>Form Reservasi</span>
                     </a>

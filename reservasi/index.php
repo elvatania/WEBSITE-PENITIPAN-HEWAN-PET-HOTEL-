@@ -1,335 +1,197 @@
 <?php
-session_start();
 include "../config/koneksi.php";
 
-// Cek apakah user sudah login, jika belum arahkan ke login.php
-if (!isset($_SESSION['id_pelanggan'])) {
-    header("Location: login.php");
-    exit();
-}
+// 1. STATISTIK RINGKASAN
+$totalPelanggan  = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM pelanggan"))['total'] ?? 0;
+$totalHewan      = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM hewan"))['total'] ?? 0;
+$totalReservasi = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM reservasi"))['total'] ?? 0;
+$totalPendapatan = mysqli_fetch_assoc(mysqli_query($conn, "SELECT IFNULL(SUM(total_bayar),0) AS total FROM pembayaran"))['total'] ?? 0;
 
-// Ambil data layanan dari database sekali untuk dilooping di setiap kartu hewan
-$q_layanan = mysqli_query($koneksi, "SELECT * FROM layanan");
-$list_layanan = [];
-while ($l = mysqli_fetch_assoc($q_layanan)) {
-    $list_layanan[] = $l;
-}
+// 2. QUERY SEMUA DATA RESERVASI (Tanpa GROUP BY dan tanpa LIMIT 5)
+$queryData = mysqli_query($conn, "
+    SELECT reservasi.id_reservasi, pelanggan.nama_pelanggan, hewan.nama_hewan, 
+           hewan.jenis_hewan, kamar.jenis_kamar, reservasi.check_in, 
+           reservasi.check_out, reservasi.status
+    FROM reservasi
+    JOIN pelanggan ON reservasi.id_pelanggan = pelanggan.id_pelanggan
+    JOIN hewan ON reservasi.id_hewan = hewan.id_hewan
+    JOIN kamar ON reservasi.id_kamar = kamar.id_kamar
+    ORDER BY reservasi.id_reservasi DESC
+");
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Form Reservasi Penitipan Hewan</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="../assets/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Reservasi - Pet Heaven</title>
+    
+    <!-- CDN Bootstrap 5 & FontAwesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .sidebar-wrapper {
+            background-color: #1a233a;
+            transition: all 0.3s ease;
+        }
+        .sidebar-wrapper .nav-link {
+            color: #a6b0cf;
+            padding: 12px 20px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            transition: all 0.3s ease;
+        }
+        .sidebar-wrapper .nav-link:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+        .sidebar-wrapper .nav-link.active {
+            color: #ffffff !important;
+            background-color: #0d6efd !important;
+        }
+    </style>
 </head>
+<body>
 
-<body class="bg-light min-vh-100 d-flex align-items-center py-5">
+<div class="container-fluid">
+    <div class="row">
 
-  <div class="container">
-    <div class="card shadow-lg border-0 rounded-4 p-4 p-md-5 bg-white mx-auto" style="max-width: 950px;">
-      <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4 pb-3 border-bottom">
-        <h1 class="h3 fw-bold text-dark mb-2 mb-sm-0">Form Reservasi Penitipan Hewan</h1>
-        <div class="d-flex gap-3 fw-semibold text-secondary small">
-          <a href="index.php" class="text-decoration-none text-dark">Beranda</a>
-          <a href="#" class="text-decoration-none text-primary active">Reservasi</a>
+        <!-- SIDEBAR -->
+        <div class="col-md-3 col-lg-2 sidebar-wrapper min-vh-100 p-3 text-white d-none" id="sidebar">
+            <div class="text-center pb-3 mb-3 border-bottom border-secondary">
+                <img src="../assets/images/logo.png" alt="Logo" width="80" class="mb-2 d-block mx-auto">
+                <h5 class="fw-bold mb-0">Pet Heaven</h5>
+            </div>
+            <nav class="nav flex-column">
+                <a href="../dashboard.php" class="nav-link"><i class="fas fa-house me-2"></i> Dashboard</a>
+                <a href="../pelanggan/index.php" class="nav-link "><i class="fas fa-user me-2"></i> Pelanggan</a>
+                <a href="../hewan/index.php" class="nav-link"><i class="fas fa-paw me-2"></i> Hewan</a>
+                <a href="index.php" class="nav-link active"><i class="fas fa-calendar-check me-2"></i> Reservasi</a>
+                <a href="../kamar.php" class="nav-link"><i class="fas fa-bed me-2"></i> Kamar</a>
+                <a href="../layanan.php" class="nav-link"><i class="fas fa-scissors me-2"></i> Layanan</a>
+                <a href="../pembayaran.php" class="nav-link"><i class="fas fa-wallet me-2"></i> Pembayaran</a>
+                <a href="../laporan.php" class="nav-link"><i class="fas fa-file me-2"></i> Laporan</a>
+                <a href="../logout.php" class="nav-link text-danger mt-4"><i class="fas fa-right-from-bracket me-2"></i> Logout</a>
+            </nav>
         </div>
-      </div>
-      <form action="proses_reservasi.php" method="POST" id="reservationForm" class="needs-validation" novalidate>
-        <div class="mb-4">
-          <div class="bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-3 fw-semibold small d-flex align-items-center gap-2 mb-3">
-            <i class="bi bi-person-fill"></i> Data Pemilik
-          </div>
-          <div class="row g-3 mb-3">
-            <div class="col-md-6">
-              <label class="form-label small fw-bold text-muted">Nama Lengkap</label>
-              <input type="text" name="nama_pelanggan" placeholder="Flora" required class="form-control form-control-sm bg-white">
+
+        <!-- ================= MAIN CONTENT ============== -->
+        <div class="col-12 p-4" id="mainContent">
+
+            <!-- HEADER / TOPBAR -->
+            <div class="d-flex justify-content-between align-items-center bg-white p-3 rounded shadow-sm mb-4">
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-outline-secondary me-3" id="menuBtn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h4 class="mb-0 fs-5 fw-bold">Kelola Reservasi</h4>
+                </div>
+                <div class="d-flex align-items-center text-secondary">
+                    <i class="fas fa-circle-user fs-4 me-2"></i>
+                    <span class="fw-semibold">Admin</span>
+                </div>
             </div>
-            <div class="col-md-6">
-              <label class="form-label small fw-bold text-muted">Email</label>
-              <input type="email" name="email" placeholder="flora@gmail.com" required class="form-control form-control-sm bg-white">
+
+            <!-- TABLE KELOLA RESERVASI -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white py-3 d-flex justify-content-between align-items-center">
+                    <span class="fw-semibold"><i class="fas fa-calendar-alt me-2"></i>Daftar Reservasi</span>
+                    <a href="tambah.php" class="btn btn-light btn-sm fw-semibold text-primary">
+                        <i class="fas fa-plus me-1"></i> Tambah Reservasi
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3">ID</th>
+                                    <th>Pelanggan</th>
+                                    <th>Hewan</th>
+                                    <th>Kamar</th>
+                                    <th>Check In</th>
+                                    <th>Check Out</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if ($queryData && mysqli_num_rows($queryData) > 0): ?>
+                                    <?php while ($row = mysqli_fetch_assoc($queryData)): ?>
+                                        <tr>
+                                            <td class="ps-3 fw-bold text-secondary">
+                                                RSV<?= str_pad($row['id_reservasi'], 3, "0", STR_PAD_LEFT); ?>
+                                            </td>
+                                            <td class="fw-semibold"><?= htmlspecialchars($row['nama_pelanggan']); ?></td>
+                                            <td>
+                                                <div class="fw-semibold"><?= htmlspecialchars($row['nama_hewan']); ?></div>
+                                                <small class="text-muted"><?= htmlspecialchars($row['jenis_hewan']); ?></small>
+                                            </td>
+                                            <td><?= htmlspecialchars($row['jenis_kamar']); ?></td>
+                                            <td><?= date('d M Y', strtotime($row['check_in'])); ?></td>
+                                            <td><?= date('d M Y', strtotime($row['check_out'])); ?></td>
+                                            <td class="text-center">
+                                                <?php
+                                                $status = $row['status'];
+                                                if ($status == "Selesai") {
+                                                    echo '<span class="badge bg-success">Selesai</span>';
+                                                } elseif ($status == "Proses") {
+                                                    echo '<span class="badge bg-warning text-dark">Proses</span>';
+                                                } elseif ($status == "Dibatalkan") {
+                                                    echo '<span class="badge bg-danger">Dibatalkan</span>';
+                                                } else {
+                                                    echo '<span class="badge bg-secondary">' . htmlspecialchars($status) . '</span>';
+                                                }
+                                                ?>
+                                            </td>
+                                            <td class="text-center">
+                                                <a href="edit_reservasi.php?id=<?= $row['id_reservasi']; ?>" class="btn btn-sm btn-outline-warning me-1">
+                                                    <i class="fas fa-pen"></i>
+                                                </a>
+                                                <a href="hapus_reservasi.php?id=<?= $row['id_reservasi']; ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Yakin ingin menghapus data ini?')">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    <?php endwhile; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="8" class="text-center py-4 text-muted">Belum ada data reservasi.</td>
+                                    </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label small fw-bold text-muted">No. Telepon</label>
-              <input type="tel" name="no_telepon" placeholder="081234567890" required class="form-control form-control-sm bg-white">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label small fw-bold text-muted">Alamat Lengkap</label>
-              <input type="text" name="alamat" placeholder="Contoh: Jl. Merdeka No. 12, Malang" required class="form-control form-control-sm bg-white">
-            </div>
-          </div>
+
         </div>
-        <div class="mb-4">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <div class="bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-3 fw-semibold small d-flex align-items-center gap-2 m-0">
-              <i class="bi bi-heart-fill"></i> Data Hewan & Layanan Masing-masing
-            </div>
-            <button type="button" id="btnTambahHewan" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1">
-              <i class="bi bi-plus-lg"></i> Tambah Hewan Lain
-            </button>
-          </div>
-          <div id="container-hewan" class="vstack gap-3">
-            <div class="hewan-item p-3 border rounded-3 position-relative bg-light bg-opacity-50">
-              <div class="row g-3 mb-3">
-                <div class="col-md-3">
-                  <label class="form-label small fw-bold">Nama Hewan</label>
-                  <input type="text" name="nama_hewan[]" placeholder="Ciko" required class="form-control form-control-sm">
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label small fw-bold">Jenis Hewan</label>
-                  <select name="jenis_hewan[]" class="form-select form-select-sm">
-                    <option>Kucing</option>
-                    <option>Anjing</option>
-                  </select>
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label small fw-bold">Ras</label>
-                  <input type="text" name="Ras[]" placeholder="Persia" class="form-control form-control-sm">
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label small fw-bold">Jenis Kelamin</label>
-                  <select name="jenis_kelamin[]" class="form-select form-select-sm">
-                    <option>Jantan</option>
-                    <option>Betina</option>
-                  </select>
-                </div>
-              </div>
-              <div class="row g-3 mb-3">
-                <div class="col-md-4">
-                  <label class="form-label small fw-bold">Usia</label>
-                  <input type="text" name="usia[]" placeholder="2 tahun" class="form-control form-control-sm">
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label small fw-bold">Berat</label>
-                  <input type="text" name="berat[]" placeholder="4 kg" class="form-control form-control-sm">
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label small fw-bold">Kondisi</label>
-                  <input type="text" name="kondisi[]" placeholder="sehat/sakit" class="form-control form-control-sm">
-                </div>
-              </div>
-             <div class="pt-3 border-top">
-                <label class="form-label small fw-bold text-primary mb-2">
-                  <i class="bi bi-gear-fill"></i> Layanan Tambahan untuk Hewan Ini
-                </label>
-                <div class="row g-2">
-                  <?php foreach ($list_layanan as $l) { 
-                      $id_lay = $l['id_layanan'];
-                      $nama_lay = htmlspecialchars($l['jenis_layanan']);
-                      $harga_lay = $l['harga'];
-                      $format_harga = number_format($harga_lay, 0, ',', '.');
-                  ?>
-                      <div class="col-md-4">
-                        <div class="form-check">
-                          <input class="form-check-input addon-check" type="checkbox" name="layanan[]" value="<?= $id_lay; ?>" data-harga="<?= $harga_lay; ?>">
-                          <label class="form-check-label small">
-                            <?= $nama_lay; ?> (Rp<?= $format_harga; ?>)
-                          </label>
-                        </div>
-                      </div>
-                  <?php } ?>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="mb-4">
-          <div class="bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-3 fw-semibold small d-flex align-items-center gap-2 mb-3">
-            <i class="bi bi-calendar-event-fill"></i> Data Penitipan & Tipe Kamar
-          </div>
-          <div class="row g-4">
-            <div class="col-md-12">
-              <div class="row g-3 mb-3">
-                <div class="col-sm-6">
-                  <label class="form-label small fw-bold">Tanggal Check-in</label>
-                  <input type="date" id="checkin" name="checkin" value="<?= date('Y-m-d'); ?>" min="<?= date('Y-m-d'); ?>" class="form-control form-control-sm" required>
-                </div>
-                <div class="col-sm-6">
-                  <label class="form-label small fw-bold">Tanggal Check-out</label>
-                  <input type="date" id="checkout" name="checkout" value="<?= date('Y-m-d', strtotime('+1 day')); ?>" class="form-control form-control-sm" required>
-                </div>
-              </div>
-              <div>
-                <label class="form-label small fw-bold">Tipe Kamar</label>
-                <select id="kamar" name="id_kamar" class="form-select form-select-sm" required>
-                  <option value="" disabled selected>-- Pilih Tipe Kamar --</option>
-                  <option value="1" data-harga="35000">Standard (Rp35.000/hari)</option>
-                  <option value="2" data-harga="50000">VIP (Rp50.000/hari)</option>
-                  <option value="3" data-harga="75000">VVIP (Rp75.000/hari)</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="mt-3">
-            <label class="form-label small fw-bold">Catatan Khusus</label>
-            <textarea name="catatan" rows="2" placeholder="Contoh: makanan khusus, obat, dll..." class="form-control form-control-sm"></textarea>
-          </div>
-        </div>
-        <div class="mb-4">
-          <div class="bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-3 fw-semibold small d-flex align-items-center gap-2 mb-3">
-            <label class="form-label small fw-bold mb-0">Rincian Perhitungan</label>
-          </div>
-          <div class="border rounded-3 p-3 bg-light">
-            <div class="row text-center g-3">
-              <div class="col-6 col-md-3">
-                <span class="d-block text-muted small fw-bold">Lama Hari</span>
-                <span id="txtLamaHari" class="h6 fw-bold text-dark">0 hari</span>
-              </div>
-              <div class="col-6 col-md-3">
-                <span class="d-block text-muted small fw-bold">Total Kamar</span>
-                <span id="txtTotalKamar" class="h6 fw-bold text-dark">Rp0</span>
-              </div>
-              <div class="col-6 col-md-3">
-                <span class="d-block text-muted small fw-bold">Total Layanan</span>
-                <span id="txtTotalLayanan" class="h6 fw-bold text-dark">Rp0</span>
-              </div>
-              <div class="col-6 col-md-3">
-                <span class="d-block text-muted small fw-bold">Total Harga</span>
-                <span id="txtTotalHarga" class="h6 fw-bold text-success">Rp0</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="d-flex justify-content-end">
-          <button type="submit" id="btnSubmit" class="btn btn-success px-4 py-2 fw-semibold d-flex align-items-center gap-2">
-            <i class="bi bi-save"></i> Simpan Reservasi
-          </button>
-        </div>
-      </form>
     </div>
-  </div>
+</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../assets/script.js?v=8.0"></script>
-  <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const checkinInput  = document.querySelector('input[name="checkin"]');
-    const checkoutInput = document.querySelector('input[name="checkout"]');
-    const selectKamar   = document.querySelector('select[name="id_kamar"]');
-    const btnTambahHewan= document.getElementById('btnTambahHewan');
-    const containerHewan= document.getElementById('container-hewan');
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    // 1. Fungsi Cek Stok Kamar
-    function ambilDataStok() {
-        if (!checkinInput || !checkoutInput || !selectKamar) return;
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const menuBtn = document.getElementById("menuBtn");
+        const sidebar = document.getElementById("sidebar");
+        const mainContent = document.getElementById("mainContent");
 
-        const checkin  = checkinInput.value;
-        const checkout = checkoutInput.value;
-
-        if (checkin && checkout) {
-            fetch(`stok.php?checkin=${checkin}&checkout=${checkout}`)
-                .then(response => response.json())
-                .then(data => {
-                    selectKamar.innerHTML = '<option value="" disabled selected>-- Pilih Tipe Kamar --</option>';
-                    data.forEach(kamar => {
-                        const option = document.createElement('option');
-                        option.value = kamar.id_kamar;
-                        option.setAttribute('data-harga', kamar.harga);
-                        const formatHarga = new Intl.NumberFormat('id-ID').format(kamar.harga);
-
-                        if (kamar.sisa > 0) {
-                            option.text = `${kamar.nama_kamar} | ${kamar.sisa} Kamar Tersedia | Rp${formatHarga}/hari`;
-                        } else {
-                            option.text = `${kamar.nama_kamar} | 0 Kamar Tersedia (Penuh) | Rp${formatHarga}/hari`;
-                            option.disabled = true;
-                            option.style.color = 'red';
-                        }
-                        selectKamar.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Gagal memuat stok kamar:', error));
-        }
-    }
-
-    if (checkinInput && checkoutInput) {
-        checkinInput.addEventListener('change', ambilDataStok);
-        checkoutInput.addEventListener('change', checkoutInput, ambilDataStok);
-        ambilDataStok();
-    }
-
-    // 2. Fungsi Hitung Total Harga (Kamar + Layanan Semua Hewan)
-    function hitungTotalSemua() {
-        // Hitung lama hari
-        let lamaHari = 1;
-        if (checkinInput && checkoutInput && checkinInput.value && checkoutInput.value) {
-            const d1 = new Date(checkinInput.value);
-            const d2 = new Date(checkoutInput.value);
-            const diffTime = d2 - d1;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            lamaHari = diffDays > 0 ? diffDays : 1;
-        }
-        document.getElementById('txtLamaHari').innerText = lamaHari + ' hari';
-
-        // Hitung harga kamar
-        let hargaKamarPerHari = 0;
-        if (selectKamar && selectKamar.selectedIndex > 0) {
-            const selectedOpt = selectKamar.options[selectKamar.selectedIndex];
-            hargaKamarPerHari = parseInt(selectedOpt.getAttribute('data-harga')) || 0;
-        }
-        let totalKamar = hargaKamarPerHari * lamaHari;
-        document.getElementById('txtTotalKamar').innerText = 'Rp' + new Intl.NumberFormat('id-ID').format(totalKamar);
-
-        // Hitung total layanan dari SELURUH hewan (termasuk hewan ke-2, ke-3, dst)
-        let totalLayananSemua = 0;
-        const semuaCheckbox = document.querySelectorAll('input.addon-check:checked');
-        semuaCheckbox.forEach(cb => {
-            totalLayananSemua += parseInt(cb.getAttribute('data-harga')) || 0;
-        });
-        document.getElementById('txtTotalLayanan').innerText = 'Rp' + new Intl.NumberFormat('id-ID').format(totalLayananSemua);
-
-        // Grand Total
-        let grandTotal = totalKamar + totalLayananSemua;
-        document.getElementById('txtTotalHarga').innerText = 'Rp' + new Intl.NumberFormat('id-ID').format(grandTotal);
-    }
-
-    // Event listener untuk perubahan kalkulasi
-    if (selectKamar) selectKamar.addEventListener('change', hitungTotalSemua);
-    if (checkinInput) checkinInput.addEventListener('change', hitungTotalSemua);
-    if (checkoutInput) checkoutInput.addEventListener('change', hitungTotalSemua);
-
-    // Delegasi event untuk checkbox layanan (agar hewan ke-2 dan seterusnya ikut terhitung)
-    document.addEventListener('change', function(e) {
-        if (e.target && e.target.classList.contains('addon-check')) {
-            hitungTotalSemua();
-        }
-    });
-
-    // 3. Tombol Tambah Hewan Lain
-    if (btnTambahHewan && containerHewan) {
-        btnTambahHewan.addEventListener('click', function() {
-            const itemPertama = containerHewan.querySelector('.hewan-item');
-            if (itemPertama) {
-                const clone = itemPertama.cloneNode(true);
-                
-                // Bersihkan input teks di form baru
-                clone.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => input.value = '');
-                
-                // Hilangkan centang checkbox di form baru
-                clone.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-
-                // Tambahkan tombol hapus untuk baris hewan tambahan
-                if (!clone.querySelector('.btn-hapus-hewan')) {
-                    const divHapus = document.createElement('div');
-                    divHapus.className = 'text-end mt-2';
-                    divHapus.innerHTML = `<button type="button" class="btn btn-danger btn-sm btn-hapus-hewan"><i class="bi bi-trash"></i> Hapus Hewan Ini</button>`;
-                    clone.appendChild(divHapus);
-
-                    divHapus.querySelector('.btn-hapus-hewan').addEventListener('click', function() {
-                        clone.remove();
-                        hitungTotalSemua(); // Update total harga setelah hewan dihapus
-                    });
-                }
-
-                containerHewan.appendChild(clone);
+        menuBtn.addEventListener("click", function () {
+            if (sidebar.classList.contains("d-none")) {
+                sidebar.classList.remove("d-none");
+                mainContent.className = "col-md-9 col-lg-10 p-4";
+            } else {
+                sidebar.classList.add("d-none");
+                mainContent.className = "col-12 p-4";
             }
         });
-    }
-});
+    });
 </script>
 
 </body>
