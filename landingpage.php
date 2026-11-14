@@ -203,7 +203,6 @@
                         <li class="nav-item"><a class="nav-link" href="#services">Layanan</a></li>
                         <li class="nav-item"><a class="nav-link" href="#rooms">Kamar</a></li>
                         <li class="nav-item"><a class="nav-link" href="#gallery">Galeri &amp; Testimoni</a></li>
-                        <li class="nav-item"><a class="nav-link" href="user/form_reservasi.php">Reservasi</a></li>
                     </ul>
 
                     <!-- Tombol Aksi (Login & Daftar) -->
