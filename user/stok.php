@@ -1,4 +1,3 @@
-
 <?php
 include "../config/koneksi.php";
 
@@ -17,8 +16,6 @@ while ($k = mysqli_fetch_assoc($q_kamar)) {
     $kapasitas_total = !empty($k['kapasitas'])
         ? (int) $k['kapasitas']
         : 10;
-
-    // Hitung hewan dari reservasi baru (detail_reservasi)
     $q_terpakai = mysqli_query($koneksi, "
         SELECT COUNT(*) AS total
         FROM (

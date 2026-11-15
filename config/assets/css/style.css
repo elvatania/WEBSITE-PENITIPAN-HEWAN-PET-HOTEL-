@@ -1,0 +1,89 @@
+  /* 4. Background Utama: Warna Cream */
+        body {
+            background-color: #F6F3EB;
+            color: #333333;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        }
+
+        /* 1. Sidebar: Biru Gelap (Urutan Warna #1) */
+        .sidebar-wrapper {
+            background-color: #27557A;
+            transition: all 0.3s ease;
+        }
+        .sidebar-wrapper .nav-link {
+            color: #C5D8D5;
+            padding: 12px 18px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            transition: all 0.25s ease;
+        }
+        .sidebar-wrapper .nav-link:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.12);
+        }
+        .sidebar-wrapper .nav-link.active {
+            color: #ffffff;
+            background-color: #5B8FA8; /* Biru Sedang */
+        }
+        .sidebar-wrapper .border-secondary {
+            border-color: rgba(197, 216, 213, 0.25);
+        }
+
+        /* 2. Topbar & Header Card Tabel: Biru Sedang (Urutan Warna #2) */
+        .topbar-header {
+            background-color: #C9DCDA;
+            border: 1px solid rgba(91, 143, 168, 0.3);
+        }
+        .topbar-header h4,
+        .topbar-header .topbar-user {
+            color: #27557A;
+        }
+
+        /* Tombol Hamburger Menu */
+        #menuBtn {
+            background-color: #ffffff;
+            border: 1px solid #5B8FA8;
+            color: #27557A;
+        }
+        #menuBtn:hover {
+            background-color: #5B8FA8;
+            color: #ffffff;
+        }
+
+        /* Header Card Tabel Reservasi */
+        .card-table-header {
+            background-color: #27557A;
+            color: #ffffff;
+        }
+
+        /* 3. Header Kolom Tabel <th>: Biru Abu Muda (Urutan Warna #3) */
+        .table thead.table-custom-header th {
+            background-color: #C9DCDA;
+            color: #27557A;
+            font-weight: 600;
+            border-bottom: 1px solid #b2c8c5;
+        }
+
+        /* Kartu Statistik */
+        .stat-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .stat-card h3 {
+            color: #27557A;
+        }
+
+        /* Status Badges */
+        .badge-proses {
+            background-color: #f59e0b;
+            color: #ffffff;
+        }
+        .badge-selesai {
+            background-color: #10b981;
+            color: #ffffff;
+        }
+        .badge-batal {
+            background-color: #ef4444;
+            color: #ffffff;
+        }

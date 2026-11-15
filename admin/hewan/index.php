@@ -3,7 +3,7 @@ session_start();
 include "../config/koneksi.php";
 
 // Query JOIN untuk mengambil semua kolom hewan + nama pelanggan
-$queryData = mysqli_query($conn, "
+$queryData = mysqli_query($koneksi, "
     SELECT hewan.*, pelanggan.nama_pelanggan 
     FROM hewan 
     JOIN pelanggan ON hewan.id_pelanggan = pelanggan.id_pelanggan 

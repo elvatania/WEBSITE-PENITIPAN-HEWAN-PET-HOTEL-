@@ -2,12 +2,12 @@
 include "config/koneksi.php";
 
 // STATISTIK DATA
-$totalPelanggan  = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM pelanggan"))['total'] ?? 0;
-$totalHewan      = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM hewan"))['total'] ?? 0;
-$totalReservasi  = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM reservasi"))['total'] ?? 0;
-$totalPendapatan = mysqli_fetch_assoc(mysqli_query($conn, "SELECT IFNULL(SUM(total_bayar),0) AS total FROM pembayaran"))['total'] ?? 0;
+$totalPelanggan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM pelanggan"))['total'] ?? 0;
+$totalHewan      = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM hewan"))['total'] ?? 0;
+$totalReservasi  = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM reservasi"))['total'] ?? 0;
+$totalPendapatan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT IFNULL(SUM(total_bayar),0) AS total FROM pembayaran"))['total'] ?? 0;
 
-$queryData = mysqli_query($conn, "
+$queryData = mysqli_query($koneksi, "
     SELECT reservasi.id_reservasi, pelanggan.nama_pelanggan, hewan.nama_hewan, 
            hewan.jenis_hewan, kamar.jenis_kamar, reservasi.check_in, 
            reservasi.check_out, reservasi.status
@@ -203,7 +203,7 @@ $queryData = mysqli_query($conn, "
                     <i class="fas fa-wallet me-2"></i> Pembayaran
                 </a>
                 <a href="laporan.php" class="nav-link">
-                    <i class="fas fa-file me-2"></i> Laporan
+                    <i class="fas fa-file-lines me-2"></i> Laporan
                 </a>
                 <a href="logout.php" class="nav-link text-danger mt-4">
                     <i class="fas fa-right-from-bracket me-2"></i> Logout

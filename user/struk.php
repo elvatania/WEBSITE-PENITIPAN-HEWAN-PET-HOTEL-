@@ -1,10 +1,8 @@
-
 <?php
 session_start();
 date_default_timezone_set('Asia/Jakarta');
 include "../config/koneksi.php";
 
-// Cek login
 if (!isset($_SESSION['id_pelanggan'])) {
     header("Location: ../auth/login.php");
     exit();
@@ -13,7 +11,6 @@ if (!isset($_SESSION['id_pelanggan'])) {
 $id_pelanggan = (int) $_SESSION['id_pelanggan'];
 $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
-// Ambil data reservasi, pelanggan, dan kamar
 $query = mysqli_query($koneksi, "
     SELECT
         r.*,
@@ -35,7 +32,6 @@ $query = mysqli_query($koneksi, "
 
 $data = mysqli_fetch_assoc($query);
 
-// Jika data tidak ditemukan
 if (!$data) {
     echo "<script>
         alert('Struk tidak ditemukan atau bukan milik akun Anda!');
@@ -45,8 +41,6 @@ if (!$data) {
 }
 
 $booking_code = "RSV" . str_pad($data['id_reservasi'], 3, "0", STR_PAD_LEFT);
-
-// Tanggal dan waktu pemesanan
 $tanggal_pesan = !empty($data['waktu_reservasi'])
     ? date('d-m-Y', strtotime($data['waktu_reservasi']))
     : date('d-m-Y', strtotime($data['tgl_reservasi']));
@@ -60,7 +54,6 @@ if (
     $jam_pesan = date('H:i', strtotime($data['waktu_reservasi'])) . ' WIB';
 }
 
-// Ambil semua hewan dalam reservasi
 $query_hewan = mysqli_query($koneksi, "
     SELECT h.*
     FROM detail_reservasi dr
@@ -74,7 +67,6 @@ while ($hewan = mysqli_fetch_assoc($query_hewan)) {
     $daftar_hewan[] = $hewan;
 }
 
-// Untuk reservasi lama yang masih menggunakan reservasi.id_hewan
 if (count($daftar_hewan) == 0 && !empty($data['nama_hewan_lama'])) {
     $daftar_hewan[] = [
         'nama_hewan' => $data['nama_hewan_lama']
@@ -82,8 +74,6 @@ if (count($daftar_hewan) == 0 && !empty($data['nama_hewan_lama'])) {
 }
 
 $jumlah_hewan = count($daftar_hewan);
-
-// Ambil layanan beserta nama hewan
 $query_layanan = mysqli_query($koneksi, "
     SELECT
         h.nama_hewan,
@@ -118,7 +108,6 @@ if (count($daftar_layanan) == 0) {
     $total_layanan = (int) ($data['total_layanan'] ?? 0);
 }
 
-// Perhitungan biaya kamar
 $lama_hari = (int) ($data['lama_hari'] ?? 1);
 $tarif_kamar = (int) ($data['harga_per_hari'] ?? 35000);
 
@@ -189,64 +178,46 @@ $total_biaya = $subtotal_kamar + $total_layanan;
 <body>
 
 <div class="container">
-
     <div class="struk">
-
-        <!-- Header -->
         <div class="text-center mb-4">
             <i class="bi bi-paw-fill fs-1 judul-struk"></i>
-
             <h3 class="judul-struk mt-2">PET HOTEL</h3>
-
             <p class="text-muted small mb-0">
                 Bukti Reservasi Penitipan Hewan
             </p>
         </div>
-
         <div class="garis"></div>
-
-        <!-- Informasi Reservasi -->
         <h6 class="fw-bold mb-3">Informasi Reservasi</h6>
-
         <div class="d-flex justify-content-between mb-2">
             <span class="text-muted">Booking Code</span>
             <strong class="text-primary">
                 <?= htmlspecialchars($booking_code); ?>
             </strong>
         </div>
-
         <div class="d-flex justify-content-between mb-2">
             <span class="text-muted">Tanggal Pemesanan</span>
             <strong><?= htmlspecialchars($tanggal_pesan); ?></strong>
         </div>
-
         <div class="d-flex justify-content-between mb-2">
             <span class="text-muted">Waktu Pemesanan</span>
             <strong><?= htmlspecialchars($jam_pesan); ?></strong>
         </div>
-
         <div class="d-flex justify-content-between mb-2">
             <span class="text-muted">Nama Pelanggan</span>
             <strong>
                 <?= htmlspecialchars($data['nama_pelanggan'] ?? '-'); ?>
             </strong>
         </div>
-
         <div class="d-flex justify-content-between mb-2">
             <span class="text-muted">No. Telepon</span>
             <strong>
                 <?= htmlspecialchars($data['no_telp'] ?? '-'); ?>
             </strong>
         </div>
-
         <div class="garis"></div>
-
-        <!-- Detail Penitipan -->
         <h6 class="fw-bold mb-3">Detail Penitipan</h6>
-
         <div class="mb-3">
             <span class="text-muted d-block mb-2">Nama Hewan</span>
-
             <?php if ($jumlah_hewan > 0) : ?>
                 <?php foreach ($daftar_hewan as $index => $hewan) : ?>
                     <div class="d-flex justify-content-between mb-2">
@@ -260,57 +231,46 @@ $total_biaya = $subtotal_kamar + $total_layanan;
                 <strong>-</strong>
             <?php endif; ?>
         </div>
-
         <div class="d-flex justify-content-between mb-2">
             <span class="text-muted">Jumlah Hewan</span>
             <strong><?= $jumlah_hewan; ?> Ekor</strong>
         </div>
-
         <div class="d-flex justify-content-between mb-2">
             <span class="text-muted">Kamar</span>
             <strong>
                 <?= htmlspecialchars($data['nama_kamar'] ?? '-'); ?>
             </strong>
         </div>
-
         <div class="d-flex justify-content-between mb-2">
             <span class="text-muted">Check In</span>
             <strong>
                 <?= htmlspecialchars($data['check_in'] ?? '-'); ?>
             </strong>
         </div>
-
         <div class="d-flex justify-content-between mb-2">
             <span class="text-muted">Check Out</span>
             <strong>
                 <?= htmlspecialchars($data['check_out'] ?? '-'); ?>
             </strong>
         </div>
-
         <div class="d-flex justify-content-between mb-2">
             <span class="text-muted">Lama Penitipan</span>
             <strong><?= $lama_hari; ?> Hari</strong>
         </div>
-
         <div class="garis"></div>
-
-        <!-- Rincian Biaya -->
         <h6 class="fw-bold mb-3">Rincian Biaya</h6>
-
         <div class="d-flex justify-content-between mb-2">
             <span class="text-muted">Tarif Kamar / Hari</span>
             <span>
                 Rp<?= number_format($tarif_kamar, 0, ',', '.'); ?>
             </span>
         </div>
-
         <div class="d-flex justify-content-between mb-2">
             <span class="text-muted">Biaya Kamar</span>
             <span>
                 Rp<?= number_format($subtotal_kamar, 0, ',', '.'); ?>
             </span>
         </div>
-
         <div class="mb-2">
     <span class="text-muted d-block mb-2">
         Layanan Tambahan
@@ -324,7 +284,6 @@ $total_biaya = $subtotal_kamar + $total_layanan;
                     <?= htmlspecialchars($layanan['jenis_layanan']); ?>
                     (<?= htmlspecialchars($layanan['nama_hewan']); ?>)
                 </span>
-
                 <span>
                     Rp<?= number_format($layanan['subtotal'], 0, ',', '.'); ?>
                 </span>
@@ -339,32 +298,27 @@ $total_biaya = $subtotal_kamar + $total_layanan;
                 Rp<?= number_format($total_layanan, 0, ',', '.'); ?>
             </strong>
         </div>
+        
+        <?php else : ?>
+            <div class="d-flex justify-content-between">
+                <span>Tidak ada layanan tambahan</span>
+                <span>Rp<?= number_format($total_layanan, 0, ',', '.'); ?></span>
+            </div>
+        <?php endif; ?>
+    </div>
+    <div class="garis"></div>
+    <div class="d-flex justify-content-between align-items-center">
+        <span class="fw-bold">Total Biaya</span>
+        <span class="total">
+            Rp<?= number_format($total_biaya, 0, ',', '.'); ?>
+        </span>
+    </div>
+    <div class="text-center mt-4">
+        <p class="text-muted small mb-0">
+            Terima kasih telah mempercayakan hewan kesayangan Anda kepada Pet Hotel 🐾
+        </p>
+    </div>
 
-    <?php else : ?>
-
-        <div class="d-flex justify-content-between">
-            <span>Tidak ada layanan tambahan</span>
-            <span>Rp<?= number_format($total_layanan, 0, ',', '.'); ?></span>
-        </div>
-
-    <?php endif; ?>
-</div>
-
-<div class="garis"></div>
-
-<div class="d-flex justify-content-between align-items-center">
-    <span class="fw-bold">Total Biaya</span>
-    <span class="total">
-        Rp<?= number_format($total_biaya, 0, ',', '.'); ?>
-    </span>
-</div>
-        <div class="text-center mt-4">
-            <p class="text-muted small mb-0">
-                Terima kasih telah mempercayakan hewan kesayangan Anda kepada Pet Hotel 🐾
-            </p>
-        </div>
-
-        <!-- Tombol -->
         <div class="d-flex gap-2 mt-4 no-print">
 
             <a href="riwayat_pesanan.php"

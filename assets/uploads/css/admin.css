@@ -1,0 +1,89 @@
+
+:root {
+    --sidebar-blue: #2c5f85;
+    --sidebar-active: #5382a6;
+    --header-sage: #c9dede;
+    --bg-cream: #f7f5ed;
+    --text-dark: #203a43;
+}
+
+body {
+    background-color: var(--bg-cream);
+    color: var(--text-dark);
+    font-family: Arial, sans-serif;
+}
+
+.judul-halaman {
+    color: var(--sidebar-blue);
+    font-weight: 700;
+}
+
+.deskripsi-halaman {
+    color: #71818a;
+}
+
+.kartu-admin {
+    background-color: #fff;
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(32, 58, 67, 0.08);
+}
+
+.tabel-admin thead th {
+    background-color: var(--header-sage);
+    color: var(--text-dark);
+    font-weight: 600;
+    padding: 15px;
+    white-space: nowrap;
+}
+
+.tabel-admin tbody td {
+    padding: 14px 15px;
+    color: var(--text-dark);
+}
+
+.tabel-admin tbody tr:hover {
+    background-color: #f0f6f4;
+}
+
+.btn-admin {
+    background-color: var(--sidebar-blue);
+    color: white;
+    border: none;
+}
+
+.btn-admin:hover {
+    background-color: var(--sidebar-active);
+    color: white;
+}
+
+.btn-bukti {
+    color: var(--sidebar-blue);
+    border: 1px solid var(--sidebar-blue);
+    background-color: white;
+}
+
+.btn-bukti:hover {
+    background-color: var(--sidebar-blue);
+    color: white;
+}
+
+.total-pembayaran {
+    color: #27845b;
+    font-weight: 700;
+}
+
+.status-lunas {
+    background-color: #d5eee1;
+    color: #24764e;
+}
+
+.status-ditolak {
+    background-color: #f8dada;
+    color: #a83232;
+}
+
+.status-menunggu {
+    background-color: #fff0c2;
+    color: #856404;
+}

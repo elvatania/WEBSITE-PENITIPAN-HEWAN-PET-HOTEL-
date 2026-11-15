@@ -1,3 +1,8 @@
+<?php
+session_start();
+
+$sudah_login = isset($_SESSION['id_pelanggan']);
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -6,15 +11,10 @@
     <title>Pet Heaven - A Place of Luxury</title>
     <script>document.documentElement.classList.add('js')</script>
 
-    <!-- Google Fonts: Bricolage Grotesque (judul) + Figtree (teks) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
-
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -181,12 +181,9 @@
     </style>
 </head>
 <body>
-
-    <!-- ================= NAVBAR ================= -->
     <header class="sticky-top bg-white shadow-sm">
         <nav class="navbar navbar-expand-md py-2">
             <div class="container">
-                <!-- Logo Brand -->
                 <a class="navbar-brand d-flex align-items-center gap-2 m-0" href="#dashboard">
                     <img src="config/assets/images/logo.png" alt="Pet Heaven Logo" style="height:56px; width:auto; object-fit:contain;">
                     <span class="font-brand fs-5 fw-bold text-brand">Pet Heaven</span>
@@ -197,43 +194,71 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navMenu">
-                    <!-- Navigasi Menu -->
                     <ul class="navbar-nav mx-auto gap-md-3">
-                        <li class="nav-item"><a class="nav-link" href="#dashboard">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#dashboard">Beranda</a></li>
                         <li class="nav-item"><a class="nav-link" href="#services">Layanan</a></li>
                         <li class="nav-item"><a class="nav-link" href="#rooms">Kamar</a></li>
                         <li class="nav-item"><a class="nav-link" href="#gallery">Galeri &amp; Testimoni</a></li>
+                        <li class="nav-item"><span class="nav-link">Reservasi</span></li>
                     </ul>
+                    <div class="d-flex align-items-center gap-2">
 
-                    <!-- Tombol Aksi (Login & Daftar) -->
-                    <div class="d-flex align-items-center gap-2 text-sm pb-2 pb-md-0">
-                        <a href="login.php" class="btn btn-brand-outline btn-sm rounded-pill px-4 fw-semibold">Login</a>
-                        <a href="daftar.php" class="btn btn-brand btn-sm rounded-pill px-4 fw-semibold shadow-sm">Daftar</a>
-                    </div>
+    <?php if ($sudah_login) : ?>
+
+        <div class="dropdown">
+            <button class="btn btn-light border rounded-pill dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown">
+                <i class="bi bi-person-circle me-1"></i>
+                <?= htmlspecialchars($_SESSION['nama_pelanggan'] ?? 'Pelanggan'); ?>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+            <li>
+                <a class="dropdown-item" href="user/riwayat_pesanan.php">
+                    <i class="bi bi-receipt me-2"></i>
+                    Riwayat Pesanan
+                </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <a class="dropdown-item text-danger" href="auth/logout.php">
+                    <i class="bi bi-box-arrow-right me-2"></i>
+                    Logout
+                </a>
+            </li>
+        </ul>
+    <?php else : ?>
+
+        <a href="auth/login.php"
+           class="btn btn-brand-outline btn-sm rounded-pill px-4">
+            Login
+        </a>
+        <a href="auth/register.php"
+           class="btn btn-brand btn-sm rounded-pill px-4">
+            Daftar
+        </a>
+    <?php endif; ?>
+</div>
                 </div>
             </div>
         </nav>
     </header>
 
-    <!-- ================= HERO SECTION ================= -->
     <section id="dashboard" class="hero">
         <div class="container text-center text-md-start">
             <div class="reveal" style="max-width: 42rem;">
                 <span class="badge-soft mb-3">A Place of Luxury</span>
-
                 <h1 class="display-5 fw-bolder text-brand lh-sm">
                     Penitipan &amp; Perawatan Terbaik untuk Anabul Kesayangan
                 </h1>
-
                 <p class="mt-3 fs-5 fw-medium text-secondary-emphasis">
                     Memberikan kenyamanan, keamanan, dan kasih sayang layaknya di rumah sendiri selama Anda bepergian.
                 </p>
-
                 <div class="mt-4 d-flex flex-wrap justify-content-center justify-content-md-start gap-3">
-                    <a href="daftar.php" class="btn btn-brand btn-lg fw-bold d-inline-flex align-items-center gap-2 shadow">
-                        <i class="fa-solid fa-calendar-check"></i>
-                        <span>Form Reservasi</span>
-                    </a>
+                    <a href="<?= $sudah_login ? 'user/index.php' : 'auth/login.php'; ?>"
+                    class="btn btn-brand btn-lg fw-bold d-inline-flex align-items-center gap-2 shadow">
+                    Form Reservasi
+                </a>
                     <a href="#services" class="btn btn-brand-light btn-lg fw-bold">
                         Lihat Layanan
                     </a>
@@ -242,7 +267,6 @@
         </div>
     </section>
 
-    <!-- ================= LAYANAN (Background: Putih) ================= -->
     <section id="services" class="py-5 bg-white">
         <div class="container py-3">
             <div class="reveal text-center mb-5">
@@ -252,7 +276,6 @@
             </div>
 
             <div class="row g-4">
-                <!-- Grooming -->
                 <div class="col-sm-6 col-md-3">
                     <div class="reveal p-3 text-center">
                         <div class="icon-circle mx-auto mb-3">
@@ -263,7 +286,6 @@
                     </div>
                 </div>
 
-                <!-- Cek Kesehatan -->
                 <div class="col-sm-6 col-md-3">
                     <div class="reveal p-3 text-center">
                         <div class="icon-circle mx-auto mb-3">
@@ -274,7 +296,6 @@
                     </div>
                 </div>
 
-                <!-- Pet Taxi -->
                 <div class="col-sm-6 col-md-3">
                     <div class="reveal p-3 text-center">
                         <div class="icon-circle mx-auto mb-3">
@@ -285,7 +306,6 @@
                     </div>
                 </div>
 
-                <!-- Pet Daycare -->
                 <div class="col-sm-6 col-md-3">
                     <div class="reveal p-3 text-center">
                         <div class="icon-circle mx-auto mb-3">
@@ -299,7 +319,6 @@
         </div>
     </section>
 
-    <!-- ================= JENIS KAMAR (Background: Cream) ================= -->
     <section id="rooms" class="py-5 bg-cream">
         <div class="container py-3">
             <div class="reveal text-center mb-5">
@@ -308,7 +327,6 @@
             </div>
 
             <div class="row g-4">
-                <!-- Kamar Standard -->
                 <div class="col-md-4">
                     <div class="reveal room-card bg-white border shadow-sm h-100">
                         <img src="config/assets/images/standart.jpeg" alt="Standard Room" class="room-img">
@@ -321,8 +339,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Kamar Deluxe / VIP -->
                 <div class="col-md-4">
                     <div class="reveal room-card bg-white border shadow-sm h-100">
                         <img src="config/assets/images/vip.jpeg" alt="VIP Room" class="room-img">
@@ -336,7 +352,6 @@
                     </div>
                 </div>
 
-                <!-- Kamar Suite / VVIP -->
                 <div class="col-md-4">
                     <div class="reveal room-card bg-white border shadow-sm h-100">
                         <img src="config/assets/images/vvip.jpeg" alt="VVIP Room" class="room-img">
@@ -353,7 +368,6 @@
         </div>
     </section>
 
-    <!-- ================= GALERI & TESTIMONI ================= -->
     <section id="gallery" class="py-5 bg-white">
         <div class="container py-3">
             <div class="reveal text-center mb-5">
@@ -429,17 +443,13 @@
         </div>
     </section>
 
-    <!-- ================= FOOTER ================= -->
     <footer class="bg-brand text-white py-4">
         <div class="reveal container">
             <div class="row align-items-center g-4">
-                <!-- Kiri: nama brand -->
                 <div class="col-md-5 text-center text-md-start">
                     <p class="font-brand fw-bold fs-5 mb-0">Pet Heaven</p>
                     <p class="text-sm mb-0" style="color: var(--brand-mint);">A Place of Luxury for Your Pets</p>
                 </div>
-
-                <!-- Kanan: Contact Us -->
                 <div class="col-md-7">
                     <p class="font-brand fw-bold mb-3 text-center text-md-start">Contact Us</p>
                     <div class="d-flex flex-wrap justify-content-center justify-content-md-start gap-3 gap-md-4">
@@ -467,12 +477,9 @@
             <p class="text-xs mb-0 text-center" style="color: var(--brand-bg);">&copy; 2026 Pet Heaven. All rights reserved.</p>
         </div>
     </footer>
-
-    <!-- Bootstrap 5 JS (untuk menu hamburger di HP) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Rating bintang: jumlah bintang penuh sesuai data-rating pada tiap testimoni
         document.querySelectorAll('.rating').forEach(el => {
             const n = parseInt(el.dataset.rating, 10);
             el.setAttribute('role', 'img');
@@ -481,8 +488,6 @@
                 '<i class="' + (i < n ? 'fa-solid' : 'fa-regular') + ' fa-star"></i>'
             ).join('');
         });
-
-        // Animasi scroll untuk semua elemen ber-class "reveal"
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {

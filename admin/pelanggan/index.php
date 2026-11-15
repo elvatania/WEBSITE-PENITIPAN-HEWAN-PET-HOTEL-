@@ -2,7 +2,7 @@
 session_start();
 include "../config/koneksi.php";
 
-$queryData = mysqli_query($conn, "SELECT * FROM pelanggan ORDER BY id_pelanggan DESC");
+$queryData = mysqli_query($koneksi, "SELECT * FROM pelanggan ORDER BY id_pelanggan DESC");
 ?>
 
 <!DOCTYPE html>

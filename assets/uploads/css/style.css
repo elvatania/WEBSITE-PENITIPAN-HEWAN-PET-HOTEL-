@@ -1,3 +1,8 @@
+
+/* =================================
+   TOMBOL KEMBALI
+================================= */
+
 .tombol-back {
     width: 48px;
     height: 48px;
@@ -27,4 +32,360 @@
     color: #3368A0;
     font-weight: 700;
     letter-spacing: 1px;
+}
+
+
+/* =================================
+   HALAMAN LAPORAN
+================================= */
+
+.halaman-laporan {
+    padding: 25px;
+    background-color: #F2EFE7;
+    min-height: 100vh;
+}
+
+
+/* =================================
+   KARTU STATISTIK
+================================= */
+
+.statistik-laporan {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.kartu-statistik {
+    background-color: #FFFFFF;
+    padding: 22px;
+    border-radius: 15px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+    transition: 0.3s;
+}
+
+.kartu-statistik h6 {
+    color: #555555;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.kartu-statistik h3 {
+    color: #3368A0;
+    font-size: 25px;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* Warna masing-masing statistik */
+
+.statistik-pendapatan h3 {
+    color: #198754;
+}
+
+.statistik-lunas h3 {
+    color: #3368A0;
+}
+
+.statistik-pending h3 {
+    color: #E6A23C;
+}
+
+
+/* =================================
+   TOMBOL TAB LAPORAN
+================================= */
+
+.tombol-laporan {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.tombol-laporan a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border: 1px solid #3368A0;
+    border-radius: 30px;
+    color: #3368A0;
+    text-decoration: none;
+    font-weight: 600;
+    background-color: #FFFFFF;
+    transition: 0.3s;
+}
+
+.tombol-laporan a:hover,
+.tombol-laporan a.aktif {
+    background-color: #3368A0;
+    color: #FFFFFF;
+}
+
+
+/* =================================
+   FILTER LAPORAN
+================================= */
+
+.filter-laporan {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filter-laporan input {
+    padding: 10px 12px;
+    border: 1px solid #C8DFDB;
+    border-radius: 8px;
+    background-color: #FFFFFF;
+    color: #333333;
+    outline: none;
+}
+
+.filter-laporan input:focus {
+    border-color: #3368A0;
+}
+
+.filter-laporan input[type="text"] {
+    min-width: 190px;
+}
+
+.filter-laporan label {
+    color: #444444;
+    font-size: 13px;
+}
+
+.btn-filter,
+.btn-reset,
+.btn-cetak {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 17px;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-filter {
+    background-color: #3368A0;
+    color: #FFFFFF;
+}
+
+.btn-filter:hover {
+    background-color: #28547F;
+}
+
+.btn-reset {
+    background-color: #C8DFDB;
+    color: #3368A0;
+}
+
+.btn-reset:hover {
+    background-color: #66A3BF;
+    color: #FFFFFF;
+}
+
+.btn-cetak {
+    background-color: #66A3BF;
+    color: #FFFFFF;
+}
+
+.btn-cetak:hover {
+    background-color: #3368A0;
+}
+
+
+/* =================================
+   KARTU TABEL LAPORAN
+================================= */
+
+.kartu-laporan {
+    background-color: #FFFFFF;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.07);
+}
+
+.judul-laporan {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 22px;
+    font-size: 21px;
+    font-weight: 700;
+    color: #3368A0;
+    background-color: #FFFFFF;
+}
+
+
+/* =================================
+   TABEL LAPORAN
+================================= */
+
+.tabel-laporan {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #FFFFFF;
+}
+
+.tabel-laporan thead {
+    background-color: #C8DFDB;
+}
+
+.tabel-laporan th {
+    padding: 14px;
+    color: #263746;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.tabel-laporan td {
+    padding: 15px 14px;
+    border-bottom: 1px solid #E5E5E5;
+    font-size: 14px;
+    color: #333333;
+}
+
+.tabel-laporan tbody tr:hover {
+    background-color: #F5F9FA;
+}
+
+.tabel-laporan small {
+    color: #777777;
+    font-size: 12px;
+}
+
+.teks-biru {
+    color: #3368A0;
+}
+
+.teks-pendapatan {
+    color: #198754;
+}
+
+.data-kosong {
+    text-align: center;
+    padding: 30px !important;
+    color: #777777 !important;
+}
+
+
+/* =================================
+   STATUS PEMBAYARAN
+================================= */
+
+.status-lunas,
+.status-pending,
+.status-ditolak {
+    display: inline-block;
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.status-lunas {
+    background-color: #D1E7DD;
+    color: #198754;
+}
+
+.status-pending {
+    background-color: #FFF0C2;
+    color: #946200;
+}
+
+.status-ditolak {
+    background-color: #F8D7DA;
+    color: #B02A37;
+}
+
+
+/* =================================
+   CETAK LAPORAN
+================================= */
+
+@media print {
+
+    .tombol-laporan,
+    .filter-laporan,
+    .sidebar,
+    .navbar {
+        display: none !important;
+    }
+
+    .halaman-laporan {
+        padding: 0;
+        background-color: #FFFFFF;
+    }
+
+    .kartu-laporan,
+    .kartu-statistik {
+        box-shadow: none;
+        border: 1px solid #DDDDDD;
+    }
+
+    .tabel-laporan {
+        font-size: 11px;
+    }
+}
+
+
+/* =================================
+   RESPONSIVE
+================================= */
+
+@media (max-width: 992px) {
+
+    .statistik-laporan {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .halaman-laporan {
+        padding: 15px;
+    }
+
+    .filter-laporan {
+        align-items: stretch;
+    }
+
+    .kartu-laporan {
+        overflow-x: auto;
+    }
+
+    .tabel-laporan {
+        min-width: 750px;
+    }
+
+}
+
+@media (max-width: 576px) {
+
+    .statistik-laporan {
+        grid-template-columns: 1fr;
+    }
+
+    .tombol-laporan a {
+        flex: 1;
+        padding: 10px;
+        font-size: 13px;
+    }
+
 }
