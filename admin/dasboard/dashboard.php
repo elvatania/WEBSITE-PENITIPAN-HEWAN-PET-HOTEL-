@@ -1,5 +1,5 @@
 <?php
-include "config/koneksi.php";
+include "../../config/koneksi.php";
 
 // STATISTIK DATA
 $totalPelanggan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM pelanggan"))['total'] ?? 0;
@@ -328,7 +328,13 @@ $queryData = mysqli_query($koneksi, "
                                     <?php endwhile; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan="7" class="text-center py-4 text-muted">Belum ada data reservasi terbaru.</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="text-center py-4 text-muted">Belum ada data reservasi terbaru.</td>
                                     </tr>
                                 <?php endif; ?>
                             </tbody>

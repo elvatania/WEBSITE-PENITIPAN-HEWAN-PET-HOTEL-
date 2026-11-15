@@ -1,5 +1,5 @@
-<?php
-include "config/koneksi.php";
+<?php 
+include __DIR__ . "/../../config/koneksi.php";  
 
     if (isset($status_baru)) {
         mysqli_query($koneksi, "UPDATE reservasi SET status = '$status_baru' WHERE id_reservasi = '$id_reservasi'");
@@ -130,7 +130,7 @@ $query_pembayaran = mysqli_query($koneksi, $sql);
 $judulHalaman    = 'Verifikasi Pembayaran';
 $menuAktif       = 'pembayaran.php';
 $pakaiDataTables = true;
-include __DIR__ . '/includes/sidebar_header.php';
+include __DIR__ . '/../../includes/sidebar_header.php';
 ?>
 
 <?php if (isset($_GET['pesan']) && $_GET['pesan'] == 'berhasil'): ?>
@@ -279,4 +279,4 @@ include __DIR__ . '/includes/sidebar_header.php';
   });
 </script>
 
-<?php include __DIR__ . '/includes/penutup_halaman.php'; ?>
+<?php include __DIR__ . '/../../includes/penutup_halaman.php';  ?>

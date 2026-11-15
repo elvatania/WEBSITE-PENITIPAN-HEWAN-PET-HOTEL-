@@ -1,6 +1,5 @@
 <?php
-include "config/koneksi.php";
-
+include __DIR__ . "/../../config/koneksi.php";
 
 $tab = isset($_GET['tab']) ? $_GET['tab'] : 'reservasi';
 
@@ -217,7 +216,7 @@ $queryDataPembayaran = mysqli_query($koneksi, "
 
 $judulHalaman = 'Laporan';
 $menuAktif    = 'laporan.php';
-include __DIR__ . '/includes/sidebar_header.php';
+include __DIR__ . '/../../includes/sidebar_header.php';
 ?>
 
 <style>
@@ -850,4 +849,4 @@ include __DIR__ . '/includes/sidebar_header.php';
 
 </div>
 
-<?php include __DIR__ . '/includes/penutup_halaman.php'; ?>
+<?php include __DIR__ . '/../../includes/penutup_halaman.php'; ?>

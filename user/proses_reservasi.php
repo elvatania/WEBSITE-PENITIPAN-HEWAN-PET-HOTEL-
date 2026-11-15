@@ -7,7 +7,7 @@ session_start();
 include "../config/koneksi.php";
 
 if (!isset($_SESSION['id_pelanggan'])) {
-    header("Location: ../auth/login.php");
+    header("Location: ../user/login.php");
     exit();
 }
 

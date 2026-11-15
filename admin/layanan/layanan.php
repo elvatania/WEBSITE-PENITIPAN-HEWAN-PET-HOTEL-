@@ -1,5 +1,5 @@
 <?php
-include "config/koneksi.php";
+include __DIR__ . "/../config/koneksi.php"; 
 
 $adaDeskripsi = false;
 $cekKolom = mysqli_query($koneksi, "SHOW COLUMNS FROM layanan LIKE 'deskripsi'");
