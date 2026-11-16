@@ -16,6 +16,7 @@ $sudah_login = isset($_SESSION['id_pelanggan']);
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
     <style>
         :root {
@@ -24,33 +25,27 @@ $sudah_login = isset($_SESSION['id_pelanggan']);
             --brand-mint: #C8DFDB;      /* Mint Soft */
             --brand-bg: #F2EFE7;        /* Cream / Off-white */
 
-            /* Hubungkan ke variabel Bootstrap */
             --bs-body-font-family: 'Figtree', system-ui, sans-serif;
             --bs-body-color: #1f2937;
             --bs-body-bg: #F2EFE7;
         }
 
         html { scroll-behavior: smooth; }
-        /*Supaya judul section tidak tertutup navbar sticky */
         section[id] { scroll-margin-top: 80px; }
 
-        /*Semua judul memakai Bricolage Grotesque */
         h1, h2, h3, h4, h5, h6, .font-brand {
             font-family: "Bricolage Grotesque", system-ui, sans-serif;
         }
 
-        /* Warna brand */
         .text-brand { color: var(--brand-primary) !important; }
         .bg-brand { background-color: var(--brand-primary) !important; }
         .bg-mint { background-color: var(--brand-mint) !important; }
         .bg-cream { background-color: var(--brand-bg) !important; }
         .border-mint { border-color: var(--brand-mint) !important; }
 
-        /* Ukuran teks kecil */
         .text-sm { font-size: .875rem; }
         .text-xs { font-size: .75rem; }
 
-        /* Tombol brand */
         .btn-brand {
             background-color: var(--brand-primary);
             border: 1px solid var(--brand-primary);
@@ -85,7 +80,6 @@ $sudah_login = isset($_SESSION['id_pelanggan']);
             color: var(--brand-primary);
         }
 
-        /* Navbar */
         .navbar .nav-link {
             color: #374151;
             font-size: .875rem;
@@ -94,7 +88,6 @@ $sudah_login = isset($_SESSION['id_pelanggan']);
         }
         .navbar .nav-link:hover { color: var(--brand-primary); }
 
-        /* Label kecil (badge) */
         .badge-soft {
             display: inline-block;
             font-size: .75rem;
@@ -107,7 +100,6 @@ $sudah_login = isset($_SESSION['id_pelanggan']);
             border-radius: 50rem;
         }
 
-        /* Hero */
         .hero {
             position: relative;
             background: url('config/assets/images/kucing.jpg') center / cover no-repeat;
@@ -122,7 +114,6 @@ $sudah_login = isset($_SESSION['id_pelanggan']);
         }
         .hero > .container { position: relative; z-index: 1; }
 
-        /* Ikon layanan */
         .icon-circle {
             width: 56px;
             height: 56px;
@@ -135,7 +126,6 @@ $sudah_login = isset($_SESSION['id_pelanggan']);
             justify-content: center;
         }
 
-        /* Kartu kamar */
         .room-card {
             border-radius: 1rem;
             overflow: hidden;
@@ -144,7 +134,6 @@ $sudah_login = isset($_SESSION['id_pelanggan']);
         .room-card:hover { box-shadow: 0 .5rem 1rem rgba(0,0,0,.12) !important; }
         .room-img { height: 192px; width: 100%; object-fit: cover; }
 
-        /* Kartu testimoni */
         .testi-card {
             background-color: var(--brand-bg);
             border: 1px solid var(--brand-mint);
@@ -154,7 +143,6 @@ $sudah_login = isset($_SESSION['id_pelanggan']);
         .testi-card img { height: 192px; width: 100%; object-fit: cover; }
         .rating { color: #fbbf24; font-size: .875rem; }
 
-        /* Kontak di footer */
         .contact-link {
             display: inline-flex;
             align-items: center;
@@ -172,7 +160,6 @@ $sudah_login = isset($_SESSION['id_pelanggan']);
             border-radius: 50%;
         }
 
-        /* Animasi muncul saat scroll */
         .js .reveal { opacity: 0; transform: translateY(32px); transition: opacity .7s ease, transform .7s ease; }
         .js .reveal.show { opacity: 1; transform: none; }
         @media (prefers-reduced-motion: reduce) {
@@ -199,46 +186,33 @@ $sudah_login = isset($_SESSION['id_pelanggan']);
                         <li class="nav-item"><a class="nav-link" href="#services">Layanan</a></li>
                         <li class="nav-item"><a class="nav-link" href="#rooms">Kamar</a></li>
                         <li class="nav-item"><a class="nav-link" href="#gallery">Galeri &amp; Testimoni</a></li>
-                        <li class="nav-item"><span class="nav-link">Reservasi</span></li>
                     </ul>
                     <div class="d-flex align-items-center gap-2">
-
-    <?php if ($sudah_login) : ?>
-
-        <div class="dropdown">
-            <button class="btn btn-light border rounded-pill dropdown-toggle"
-                    type="button"
-                    data-bs-toggle="dropdown">
-                <i class="bi bi-person-circle me-1"></i>
-                <?= htmlspecialchars($_SESSION['nama_pelanggan'] ?? 'Pelanggan'); ?>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end shadow border-0">
-            <li>
-                <a class="dropdown-item" href="user/riwayat_pesanan.php">
-                    <i class="bi bi-receipt me-2"></i>
-                    Riwayat Pesanan
-                </a>
-            </li>
-            <li><hr class="dropdown-divider"></li>
-            <li>
-                <a class="dropdown-item text-danger" href="auth/logout.php">
-                    <i class="bi bi-box-arrow-right me-2"></i>
-                    Logout
-                </a>
-            </li>
-        </ul>
-    <?php else : ?>
-
-        <a href="auth/login.php"
-           class="btn btn-brand-outline btn-sm rounded-pill px-4">
-            Login
-        </a>
-        <a href="auth/register.php"
-           class="btn btn-brand btn-sm rounded-pill px-4">
-            Daftar
-        </a>
-    <?php endif; ?>
-</div>
+                        <?php if ($sudah_login) : ?>
+                            <div class="dropdown">
+                                <button class="btn btn-light border rounded-pill dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-person-circle me-1"></i>
+                                    <?= htmlspecialchars($_SESSION['nama_pelanggan'] ?? 'Pelanggan'); ?>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                                    <li>
+                                        <a class="dropdown-item" href="user/riwayat_pesanan.php">
+                                            <i class="bi bi-receipt me-2"></i> Riwayat Pesanan
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item text-danger" href="user/logout.php">
+                                            <i class="bi bi-box-arrow-right me-2"></i> Logout
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <?php else : ?>
+                                <a href="user/login.php" class="btn btn-brand-outline btn-sm rounded-pill px-4">Login</a>
+                                <a href="user/register.php" class="btn btn-brand btn-sm rounded-pill px-4">Daftar</a>
+                            <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -255,7 +229,7 @@ $sudah_login = isset($_SESSION['id_pelanggan']);
                     Memberikan kenyamanan, keamanan, dan kasih sayang layaknya di rumah sendiri selama Anda bepergian.
                 </p>
                 <div class="mt-4 d-flex flex-wrap justify-content-center justify-content-md-start gap-3">
-                    <a href="<?= $sudah_login ? 'user/index.php' : 'auth/login.php'; ?>"
+                    <a href="<?= $sudah_login ? 'user/index.php' : 'user/login.php'; ?>"
                     class="btn btn-brand btn-lg fw-bold d-inline-flex align-items-center gap-2 shadow">
                     Form Reservasi
                 </a>
@@ -380,7 +354,7 @@ $sudah_login = isset($_SESSION['id_pelanggan']);
                     <figure class="reveal testi-card d-flex flex-column h-100 m-0">
                         <img src="config/assets/images/testimoni1.jpg" alt="Kucing menginap di Pet Heaven">
                         <div class="p-3 d-flex flex-column flex-grow-1">
-                            <div class="rating d-flex gap-1 mb-3" data-rating="3"></div>
+                            <div class="rating d-flex gap-1 mb-3" data-rating="5"></div>
                             <blockquote class="text-sm text-secondary-emphasis flex-grow-1 mb-0" style="line-height:1.65;">
                                 &ldquo;Waktu saya pulang dari luar kota, kucing saya tetap makan lahap dan kelihatan santai. Dikirimi foto tiap hari jadi saya tidak khawatir.&rdquo;
                             </blockquote>
@@ -428,7 +402,7 @@ $sudah_login = isset($_SESSION['id_pelanggan']);
                     <figure class="reveal testi-card d-flex flex-column h-100 m-0">
                         <img src="config/assets/images/testimoni6.jpg" alt="Anak anjing dirawat petugas">
                         <div class="p-3 d-flex flex-column flex-grow-1">
-                            <div class="rating d-flex gap-1 mb-3" data-rating="3"></div>
+                            <div class="rating d-flex gap-1 mb-3" data-rating="5"></div>
                             <blockquote class="text-sm text-secondary-emphasis flex-grow-1 mb-0" style="line-height:1.65;">
                                 &ldquo;Saya titip anak anjing saya dari pagi sampai sore. Pulang kerja dia capek karena puas bermain.&rdquo;
                             </blockquote>
@@ -453,7 +427,7 @@ $sudah_login = isset($_SESSION['id_pelanggan']);
                 <div class="col-md-7">
                     <p class="font-brand fw-bold mb-3 text-center text-md-start">Contact Us</p>
                     <div class="d-flex flex-wrap justify-content-center justify-content-md-start gap-3 gap-md-4">
-                        <a href="https://wa.me/6285198177701?s=t" target="_blank" rel="noopener" class="contact-link">
+                        <a href="https://wa.me/6285198177701" target="_blank" rel="noopener" class="contact-link">
                             <img src="config/assets/images/wa.jpg" alt="WhatsApp">
                             <span>WhatsApp</span>
                         </a>
@@ -477,8 +451,8 @@ $sudah_login = isset($_SESSION['id_pelanggan']);
             <p class="text-xs mb-0 text-center" style="color: var(--brand-bg);">&copy; 2026 Pet Heaven. All rights reserved.</p>
         </div>
     </footer>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.querySelectorAll('.rating').forEach(el => {
             const n = parseInt(el.dataset.rating, 10);
@@ -499,13 +473,11 @@ $sudah_login = isset($_SESSION['id_pelanggan']);
         }, { threshold: 0.15 });
 
         document.querySelectorAll('.reveal').forEach(el => {
-            // jeda bertahap antar elemen yang bersaudara (kartu muncul berurutan)
             const container = el.closest('.row') || el.parentElement;
             const sibs = [...container.querySelectorAll('.reveal')];
             el.style.transitionDelay = (sibs.indexOf(el) * 120) + 'ms';
             observer.observe(el);
         });
     </script>
-
 </body>
 </html>

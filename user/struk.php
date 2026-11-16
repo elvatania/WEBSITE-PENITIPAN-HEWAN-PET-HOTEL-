@@ -111,9 +111,9 @@ if (count($daftar_layanan) == 0) {
 $lama_hari = (int) ($data['lama_hari'] ?? 1);
 $tarif_kamar = (int) ($data['harga_per_hari'] ?? 35000);
 
-$subtotal_kamar = $tarif_kamar * $lama_hari * $jumlah_hewan;
+// Perbaikan rumus perhitungan subtotal kamar
+$subtotal_kamar = $tarif_kamar * $lama_hari * ($jumlah_hewan > 0 ? $jumlah_hewan : 1);
 $total_biaya = $subtotal_kamar + $total_layanan;
-
 ?>
 
 <!DOCTYPE html>
@@ -121,18 +121,14 @@ $total_biaya = $subtotal_kamar + $total_layanan;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Struk Reservasi - Pet Hotel</title>
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
     <style>
         body {
             background-color: #F2EFE7;
             min-height: 100vh;
         }
-
         .struk {
             max-width: 500px;
             margin: 50px auto;
@@ -141,40 +137,33 @@ $total_biaya = $subtotal_kamar + $total_layanan;
             border-radius: 18px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         }
-
         .judul-struk {
             color: #3368A0;
             font-weight: bold;
         }
-
         .garis {
             border-top: 1px dashed #ccc;
             margin: 18px 0;
         }
-
         .total {
             color: #3368A0;
             font-size: 20px;
             font-weight: bold;
         }
-
         @media print {
             body {
                 background: white;
             }
-
             .struk {
                 box-shadow: none;
                 margin: 0 auto;
             }
-
             .no-print {
                 display: none !important;
             }
         }
     </style>
 </head>
-
 <body>
 
 <div class="container">
@@ -272,55 +261,52 @@ $total_biaya = $subtotal_kamar + $total_layanan;
             </span>
         </div>
         <div class="mb-2">
-    <span class="text-muted d-block mb-2">
-        Layanan Tambahan
-    </span>
-
-    <?php if (count($daftar_layanan) > 0) : ?>
-
-        <?php foreach ($daftar_layanan as $layanan) : ?>
-            <div class="d-flex justify-content-between mb-2">
-                <span>
-                    <?= htmlspecialchars($layanan['jenis_layanan']); ?>
-                    (<?= htmlspecialchars($layanan['nama_hewan']); ?>)
-                </span>
-                <span>
-                    Rp<?= number_format($layanan['subtotal'], 0, ',', '.'); ?>
-                </span>
-            </div>
-        <?php endforeach; ?>
-
-        <div class="d-flex justify-content-between mt-2">
-            <span class="text-muted small">
-                Total Layanan Tambahan
+            <span class="text-muted d-block mb-2">
+                Layanan Tambahan
             </span>
-            <strong class="small">
-                Rp<?= number_format($total_layanan, 0, ',', '.'); ?>
-            </strong>
+
+            <?php if (count($daftar_layanan) > 0) : ?>
+                <?php foreach ($daftar_layanan as $layanan) : ?>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>
+                            <?= htmlspecialchars($layanan['jenis_layanan']); ?>
+                            (<?= htmlspecialchars($layanan['nama_hewan']); ?>)
+                        </span>
+                        <span>
+                            Rp<?= number_format($layanan['subtotal'], 0, ',', '.'); ?>
+                        </span>
+                    </div>
+                <?php endforeach; ?>
+
+                <div class="d-flex justify-content-between mt-2">
+                    <span class="text-muted small">
+                        Total Layanan Tambahan
+                    </span>
+                    <strong class="small">
+                        Rp<?= number_format($total_layanan, 0, ',', '.'); ?>
+                    </strong>
+                </div>
+            <?php else : ?>
+                <div class="d-flex justify-content-between">
+                    <span>Tidak ada layanan tambahan</span>
+                    <span>Rp<?= number_format($total_layanan, 0, ',', '.'); ?></span>
+                </div>
+            <?php endif; ?>
         </div>
-        
-        <?php else : ?>
-            <div class="d-flex justify-content-between">
-                <span>Tidak ada layanan tambahan</span>
-                <span>Rp<?= number_format($total_layanan, 0, ',', '.'); ?></span>
-            </div>
-        <?php endif; ?>
-    </div>
-    <div class="garis"></div>
-    <div class="d-flex justify-content-between align-items-center">
-        <span class="fw-bold">Total Biaya</span>
-        <span class="total">
-            Rp<?= number_format($total_biaya, 0, ',', '.'); ?>
-        </span>
-    </div>
-    <div class="text-center mt-4">
-        <p class="text-muted small mb-0">
-            Terima kasih telah mempercayakan hewan kesayangan Anda kepada Pet Hotel 🐾
-        </p>
-    </div>
+        <div class="garis"></div>
+        <div class="d-flex justify-content-between align-items-center">
+            <span class="fw-bold">Total Biaya</span>
+            <span class="total">
+                Rp<?= number_format($total_biaya, 0, ',', '.'); ?>
+            </span>
+        </div>
+        <div class="text-center mt-4">
+            <p class="text-muted small mb-0">
+                Terima kasih telah mempercayakan hewan kesayangan Anda kepada Pet Hotel 🐾
+            </p>
+        </div>
 
         <div class="d-flex gap-2 mt-4 no-print">
-
             <a href="riwayat_pesanan.php"
                class="btn btn-outline-secondary w-50">
                 <i class="bi bi-arrow-left me-1"></i>
@@ -333,11 +319,8 @@ $total_biaya = $subtotal_kamar + $total_layanan;
                 <i class="bi bi-printer me-1"></i>
                 Cetak Struk
             </button>
-
         </div>
-
     </div>
-
 </div>
 
 </body>

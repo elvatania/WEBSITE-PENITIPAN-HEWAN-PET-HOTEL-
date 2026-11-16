@@ -213,8 +213,6 @@ if ($q_hewan) {
             </div>
           </div>
         </div>
-
-        <!-- ================= DATA PENITIPAN ================= -->
         <div class="mb-4">
           <div class="bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-3 fw-semibold small d-flex align-items-center gap-2 mb-3">
             <i class="bi bi-calendar-event-fill"></i> Data Penitipan &amp; Tipe Kamar
@@ -247,8 +245,6 @@ if ($q_hewan) {
             <textarea name="catatan" rows="2" placeholder="Contoh: makanan khusus, obat, dll..." class="form-control form-control-sm"></textarea>
           </div>
         </div>
-
-        <!-- ================= RINCIAN ================= -->
         <div class="mb-4">
           <div class="bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-3 fw-semibold small d-flex align-items-center gap-2 mb-3">
             <label class="form-label small fw-bold mb-0">Rincian Perhitungan</label>
@@ -293,8 +289,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const selectKamar    = document.querySelector('select[name="id_kamar"]');
     const btnTambahHewan = document.getElementById('btnTambahHewan');
     const containerHewan = document.getElementById('container-hewan');
-
-    // Mengatur nama layanan sesuai urutan kartu hewan
     function aturNamaLayanan() {
         const semuaHewan = containerHewan.querySelectorAll('.hewan-item');
         semuaHewan.forEach(function(item, index) {
@@ -303,8 +297,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-
-    // 1. Cek stok kamar
     function ambilDataStok() {
         if (!checkinInput || !checkoutInput || !selectKamar) return;
 
@@ -341,8 +333,6 @@ document.addEventListener('DOMContentLoaded', function() {
         checkoutInput.addEventListener('change', ambilDataStok);
         ambilDataStok();
     }
-
-    // 2. Hitung total
     function hitungTotalSemua() {
         let lamaHari = 1;
         if (checkinInput && checkoutInput && checkinInput.value && checkoutInput.value) {
@@ -381,8 +371,6 @@ document.addEventListener('DOMContentLoaded', function() {
             hitungTotalSemua();
         }
     });
-
-    // 3. Tombol Tambah Hewan Lain (maksimal 3 hewan)
     if (btnTambahHewan && containerHewan) {
         btnTambahHewan.addEventListener('click', function() {
             const jumlahHewan = containerHewan.querySelectorAll('.hewan-item').length;
@@ -395,18 +383,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const itemPertama = containerHewan.querySelector('.hewan-item');
             if (itemPertama) {
                 const clone = itemPertama.cloneNode(true);
-
-                // Kosongkan input
                 clone.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
                     input.value = '';
                 });
-
-                // Hilangkan centang checkbox
                 clone.querySelectorAll('input[type="checkbox"]').forEach(cb => {
                     cb.checked = false;
                 });
-
-                // Tambahkan tombol hapus
                 const divHapus = document.createElement('div');
                 divHapus.className = 'text-end mt-2';
                 divHapus.innerHTML = `
@@ -428,13 +410,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
-    // 4. Autocomplete hewan yang pernah dititipkan
     const hewanSebelumnya = <?= json_encode($list_hewan) ?>;
     document.getElementById('daftarHewan').innerHTML =
         hewanSebelumnya.map(h => `<option value="${String(h.nama_hewan).replace(/"/g, '&quot;')}">`).join('');
 
-    // Klik tombol "Hewan Saya" -> isi kartu hewan yang masih kosong (atau buat kartu baru)
     document.addEventListener('click', function(e) {
         const btn = e.target.closest('.btn-pilih-hewan');
         if (!btn) return;
@@ -464,7 +443,6 @@ document.addEventListener('DOMContentLoaded', function() {
         card.querySelector('[name="kondisi[]"]').value       = h.kondisi ?? '';
     });
 
-    // Delegasi event supaya berlaku juga di kartu hewan hasil "Tambah Hewan Lain"
     document.addEventListener('change', function(e) {
         if (!e.target.classList.contains('input-nama-hewan')) return;
 

@@ -89,6 +89,7 @@ if (!$q_terpakai) {
 $data_terpakai   = mysqli_fetch_assoc($q_terpakai);
 $jumlah_terpakai = (int) $data_terpakai['total'];
 $sisa_kamar      = $kapasitas - $jumlah_terpakai;
+
 if ($sisa_kamar < $jumlah_hewan) {
     die(
         "Maaf, kapasitas kamar tidak mencukupi untuk "
@@ -99,7 +100,6 @@ if ($sisa_kamar < $jumlah_hewan) {
     );
 }
 
-$total_kamar = $harga_kamar_per_hari * $lama_hari * $jumlah_hewan;
 mysqli_begin_transaction($koneksi);
 try {
     $sql_reservasi = "
@@ -131,7 +131,7 @@ try {
         '$catatan',
         'Menunggu Konfirmasi'
     )
-";
+    ";
 
     if (!mysqli_query($koneksi, $sql_reservasi)) {
         throw new Exception(mysqli_error($koneksi));
@@ -153,7 +153,6 @@ try {
             throw new Exception("Nama hewan ke-" . ($i + 1) . " belum diisi.");
         }
 
-        // Cek apakah hewan dengan nama ini sudah pernah terdaftar untuk pelanggan ini
         $q_cek = mysqli_query($koneksi, "
             SELECT id_hewan FROM hewan
             WHERE id_pelanggan = '$id_pelanggan' AND nama_hewan = '$h_nama'
@@ -162,7 +161,6 @@ try {
         $hewan_lama = mysqli_fetch_assoc($q_cek);
 
         if ($hewan_lama) {
-            // Pakai data lama, perbarui info terbarunya
             $id_hewan = (int) $hewan_lama['id_hewan'];
             $sql_hewan = "
                 UPDATE hewan SET
@@ -179,7 +177,6 @@ try {
                 throw new Exception(mysqli_error($koneksi));
             }
         } else {
-            // Hewan baru
             $sql_hewan = "
                 INSERT INTO hewan
                 (id_pelanggan, nama_hewan, jenis_hewan, ras, jenis_kelamin, usia_hewan, berat_hewan, kondisi, catatan)

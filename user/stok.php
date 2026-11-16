@@ -11,11 +11,11 @@ $q_kamar = mysqli_query($koneksi, "SELECT * FROM kamar");
 $data_kamar = [];
 
 while ($k = mysqli_fetch_assoc($q_kamar)) {
-
     $id_kamar = (int) $k['id_kamar'];
     $kapasitas_total = !empty($k['kapasitas'])
         ? (int) $k['kapasitas']
         : 10;
+
     $q_terpakai = mysqli_query($koneksi, "
         SELECT COUNT(*) AS total
         FROM (
@@ -52,16 +52,20 @@ while ($k = mysqli_fetch_assoc($q_kamar)) {
     $d_terpakai = mysqli_fetch_assoc($q_terpakai);
     $terpakai = (int) ($d_terpakai['total'] ?? 0);
 
+    // Memperbaiki syntax error kurang operator kurang (-) pada perhitungan sisa
     $sisa = $kapasitas_total - $terpakai;
 
     if ($sisa < 0) {
         $sisa = 0;
     }
 
+    // Mengambil harga dengan aman dari berbagai kemungkinan nama kolom
+    $harga_kamar = $k['harga'] ?? $k['harga_per_hari'] ?? 35000;
+
     $data_kamar[] = [
         'id_kamar'   => $k['id_kamar'],
         'nama_kamar' => $k['nama_kamar'],
-        'harga'      => $k['harga_per_hari'],
+        'harga'      => $harga_kamar,
         'sisa'       => $sisa
     ];
 }
