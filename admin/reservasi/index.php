@@ -7,19 +7,22 @@ $queryReservasi = mysqli_query($koneksi, "
     SELECT
         reservasi.id_reservasi,
         COALESCE(pelanggan.nama_pelanggan, '-') AS nama_pelanggan,
-        COALESCE(hewan.nama_hewan, '-') AS nama_hewan,
-        COALESCE(hewan.jenis_hewan, '-') AS jenis_hewan,
         COALESCE(kamar.jenis_kamar, 'Standard') AS jenis_kamar,
         reservasi.check_in,
         reservasi.check_out,
-        reservasi.status
+        reservasi.status,
+        GROUP_CONCAT(hewan.nama_hewan SEPARATOR ', ') AS nama_hewan,
+        GROUP_CONCAT(hewan.jenis_hewan SEPARATOR ', ') AS jenis_hewan
     FROM reservasi
     LEFT JOIN pelanggan
         ON reservasi.id_pelanggan = pelanggan.id_pelanggan
+    LEFT JOIN detail_reservasi
+        ON reservasi.id_reservasi = detail_reservasi.id_reservasi
     LEFT JOIN hewan
-        ON reservasi.id_hewan = hewan.id_hewan
+        ON detail_reservasi.id_hewan = hewan.id_hewan
     LEFT JOIN kamar
         ON reservasi.id_kamar = kamar.id_kamar
+    GROUP BY reservasi.id_reservasi
     ORDER BY reservasi.id_reservasi DESC
 ");
 
@@ -175,9 +178,10 @@ endif;
                 <a href="../layanan/layanan.php" class="nav-link"><i class="fas fa-scissors me-2"></i> Layanan</a>
                 <a href="../pembayaran.php" class="nav-link"><i class="fas fa-wallet me-2"></i> Pembayaran</a>
                 <a href="../laporan.php" class="nav-link"><i class="fas fa-file me-2"></i> Laporan</a>
-                <a href="/WEBSITE-PENITIPAN-HEWAN-PET-HOTEL-/admin/logout.php" class="nav-link text-danger mt-4">
+                <a href="../logout.php" class="nav-link text-danger mt-4">
                     <i class="fas fa-right-from-bracket me-2"></i> Logout
                 </a>
+            </nav>
             </nav>
         </div>
 

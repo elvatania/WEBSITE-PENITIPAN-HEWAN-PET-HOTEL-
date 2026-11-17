@@ -10,13 +10,21 @@ $totalReservasi  = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) AS
 $totalPendapatan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT IFNULL(SUM(total_bayar),0) AS total FROM pembayaran"))['total'] ?? 0;
 
 $queryData = mysqli_query($koneksi, "
-    SELECT reservasi.id_reservasi, pelanggan.nama_pelanggan, hewan.nama_hewan, 
-           hewan.jenis_hewan, kamar.jenis_kamar, reservasi.check_in, 
-           reservasi.check_out, reservasi.status
+    SELECT 
+        reservasi.id_reservasi, 
+        COALESCE(pelanggan.nama_pelanggan, '-') AS nama_pelanggan, 
+        COALESCE(kamar.jenis_kamar, 'Standard') AS jenis_kamar, 
+        reservasi.check_in, 
+        reservasi.check_out, 
+        reservasi.status,
+        GROUP_CONCAT(hewan.nama_hewan SEPARATOR ', ') AS nama_hewan,
+        GROUP_CONCAT(hewan.jenis_hewan SEPARATOR ', ') AS jenis_hewan
     FROM reservasi
-    JOIN pelanggan ON reservasi.id_pelanggan = pelanggan.id_pelanggan
-    JOIN hewan ON reservasi.id_hewan = hewan.id_hewan
-    JOIN kamar ON reservasi.id_kamar = kamar.id_kamar
+    LEFT JOIN pelanggan ON reservasi.id_pelanggan = pelanggan.id_pelanggan
+    LEFT JOIN detail_reservasi ON reservasi.id_reservasi = detail_reservasi.id_reservasi
+    LEFT JOIN hewan ON detail_reservasi.id_hewan = hewan.id_hewan
+    LEFT JOIN kamar ON reservasi.id_kamar = kamar.id_kamar
+    GROUP BY reservasi.id_reservasi
     ORDER BY reservasi.id_reservasi DESC
 ");
 ?>
@@ -176,7 +184,7 @@ $queryData = mysqli_query($koneksi, "
     <div class="row">
         <div class="col-md-3 col-lg-2 sidebar-wrapper p-3" id="sidebar">
             <div class="text-center py-3 mb-3 border-bottom border-light-subtle">
-                <img src="../config/assets/images/logo.png" alt="Logo" width="180" class="mb-2 d-block mx-auto img-fluid" onerror="this.onerror=null; ">
+                <img src="../config/assets/images/logo.png" alt="Logo" width="180" class="mb-2 d-block mx-auto img-fluid" onerror="this.onerror=null;">
                 <div class="sidebar-brand">Pet Heaven</div>
             </div>
 
@@ -328,13 +336,7 @@ $queryData = mysqli_query($koneksi, "
                                     <?php endwhile; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td class="text-center py-4 text-muted">Belum ada data reservasi terbaru.</td>
+                                        <td colspan="7" class="text-center py-4 text-muted">Belum ada data reservasi terbaru.</td>
                                     </tr>
                                 <?php endif; ?>
                             </tbody>
@@ -349,7 +351,6 @@ $queryData = mysqli_query($koneksi, "
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
@@ -385,7 +386,6 @@ $queryData = mysqli_query($koneksi, "
             }
         });
     });
-</script>
 </script>
 </body>
 </html>
