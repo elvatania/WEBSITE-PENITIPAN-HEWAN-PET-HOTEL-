@@ -1,6 +1,6 @@
 <?php
 session_start();
-include "../config/koneksi.php";
+include __DIR__ . "/../../config/koneksi.php";
 
 $queryData = mysqli_query($koneksi, "SELECT * FROM pelanggan ORDER BY id_pelanggan DESC");
 ?>
@@ -188,12 +188,12 @@ endif;
 
 <div class="container-fluid">
     <div class="row">
-        <!-- ================= SIDEBAR ================= -->
         <div class="col-md-3 col-lg-2 sidebar-wrapper p-3" id="sidebar">
-            <div class="text-center py-3 mb-3 border-bottom border-light-subtle">
-                <img src="../config/assets/images/logo.png" alt="Logo" width="180" class="mb-2 d-block mx-auto img-fluid">
-                <div class="sidebar-brand">Pet Heaven</div>
-            </div>
+    <div class="text-center py-3 mb-3 border-bottom border-light-subtle">
+        <img src="../../config/assets/images/logo.png" alt="Logo" width="180" class="mb-2 d-block mx-auto img-fluid rounded-circle" style="width: 80px; height: 80px; object-fit: cover;"
+            onerror="this.onerror=null; ">
+        <div class="sidebar-brand">Pet Heaven</div>
+    </div>
             <nav class="nav flex-column">
                 <a href="../dashboard.php" class="nav-link"><i class="fas fa-house me-2"></i> Dashboard</a>
                 <a href="index.php" class="nav-link active"><i class="fas fa-user me-2"></i> Pelanggan</a>
@@ -203,7 +203,9 @@ endif;
                 <a href="../layanan.php" class="nav-link"><i class="fas fa-scissors me-2"></i> Layanan</a>
                 <a href="../pembayaran.php" class="nav-link"><i class="fas fa-wallet me-2"></i> Pembayaran</a>
                 <a href="../laporan.php" class="nav-link"><i class="fas fa-file me-2"></i> Laporan</a>
-                <a href="../logout.php" class="nav-link text-danger mt-4"><i class="fas fa-right-from-bracket me-2"></i> Logout</a>
+                <a href="/WEBSITE-PENITIPAN-HEWAN-PET-HOTEL-/admin/logout.php" class="nav-link text-danger mt-4">
+    <i class="fas fa-right-from-bracket me-2"></i> Logout
+</a>
             </nav>
         </div>
 

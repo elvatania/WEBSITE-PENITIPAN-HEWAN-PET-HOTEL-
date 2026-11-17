@@ -1,6 +1,6 @@
 <?php
 session_start();
-include "../config/koneksi.php";
+include __DIR__ . "/../../config/koneksi.php";
 
 if (isset($_POST['simpan'])) {
     $nama   = mysqli_real_escape_string($koneksi, $_POST['nama_pelanggan']);

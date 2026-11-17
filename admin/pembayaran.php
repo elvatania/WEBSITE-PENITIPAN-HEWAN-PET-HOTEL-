@@ -1,7 +1,13 @@
-<?php 
-include __DIR__ . "/../../config/koneksi.php";  
+<?php
+session_start();
+include '../config/koneksi.php';
 
-    if (isset($status_baru)) {
+// Tangkap aksi konfirmasi atau tolak dari URL
+if (isset($_GET['aksi']) && isset($_GET['id'])) {
+    $status_baru = ($_GET['aksi'] == 'konfirmasi') ? 'Lunas' : 'Dibatalkan';
+    $id_reservasi = (int)$_GET['id'];
+
+    if ($id_reservasi > 0) {
         mysqli_query($koneksi, "UPDATE reservasi SET status = '$status_baru' WHERE id_reservasi = '$id_reservasi'");
 
         if ($status_baru == 'Lunas') {
@@ -25,6 +31,8 @@ include __DIR__ . "/../../config/koneksi.php";
         header("Location: pembayaran.php?pesan=berhasil");
         exit();
     }
+}
+
 $kolomHargaKamar = null;
 $qh = mysqli_query($koneksi, "SHOW COLUMNS FROM kamar");
 while ($qh && $c = mysqli_fetch_assoc($qh)) {
@@ -48,10 +56,10 @@ $qp = mysqli_query($koneksi, "SHOW COLUMNS FROM pembayaran");
 while ($qp && $c = mysqli_fetch_assoc($qp)) {
     if (preg_match('/bukti|foto|struk/i', $c['Field'])) {
         $ekspresi_bukti[] = "NULLIF((SELECT bb.`" . $c['Field'] . "` FROM pembayaran bb
-                              WHERE bb.id_reservasi = r.id_reservasi
-                                AND bb.`" . $c['Field'] . "` IS NOT NULL
-                                AND bb.`" . $c['Field'] . "` <> ''
-                              ORDER BY bb.id_bayar DESC LIMIT 1), '')";
+                            WHERE bb.id_reservasi = r.id_reservasi
+                              AND bb.`" . $c['Field'] . "` IS NOT NULL
+                              AND bb.`" . $c['Field'] . "` <> ''
+                            ORDER BY bb.id_bayar DESC LIMIT 1), '')";
     }
 }
 
@@ -65,8 +73,11 @@ function cariBukti($nama) {
 
     $nama = str_replace('\\', '/', $nama);
     $base = basename($nama);
-    $root = str_replace('\\', '/', __DIR__);
+    
+    // Root direktori website (naik 2 tingkat dari admin/pembayaran/)
+    $root = str_replace('\\', '/', realpath(__DIR__ . '/../../'));
 
+    // Daftar kemungkinan lokasi penyimpanan file bukti upload
     $kandidat = [
         $nama,
         'uploads/' . $base,
@@ -76,14 +87,22 @@ function cariBukti($nama) {
         'assets/uploads/' . $base,
         'config/uploads/' . $base,
         'config/assets/uploads/' . $base,
+        'admin/uploads/' . $base,
         '../uploads/' . $base,
-        '../uploads/bukti/' . $base,
+        '../../uploads/' . $base,
+        '../../uploads/bukti/' . $base,
         '../' . $nama,
+        '../../' . $nama,
     ];
 
     $ketemu = null;
     foreach ($kandidat as $k) {
-        if (file_exists($root . '/' . $k)) { $ketemu = $k; break; }
+        // Cek relatif terhadap root folder website
+        if (file_exists($root . '/' . ltrim($k, '/'))) { 
+            // Ubah path agar bisa diakses dari file di folder admin/pembayaran/
+            $ketemu = '../../' . ltrim($k, '/');
+            break; 
+        }
     }
 
     if ($ketemu === null) {
@@ -101,11 +120,13 @@ function cariBukti($nama) {
                 }
             } catch (Exception $e) {}
         }
-        if (isset($indeks[$base])) $ketemu = $indeks[$base];
+        if (isset($indeks[$base])) {
+            $ketemu = '../../' . $indeks[$base];
+        }
     }
 
     if ($ketemu === null) return null;
-    return implode('/', array_map('rawurlencode', explode('/', $ketemu)));
+    return $ketemu;
 }
 
 $sql = "SELECT 
@@ -130,12 +151,12 @@ $query_pembayaran = mysqli_query($koneksi, $sql);
 $judulHalaman    = 'Verifikasi Pembayaran';
 $menuAktif       = 'pembayaran.php';
 $pakaiDataTables = true;
-include __DIR__ . '/../../includes/sidebar_header.php';
+include '../includes/sidebar_header.php';
 ?>
 
 <?php if (isset($_GET['pesan']) && $_GET['pesan'] == 'berhasil'): ?>
   <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-    <i class="fas fa-circle-check me-2"></i>Status pembayaran berhasil diperbarui! Data laporan dan statistik ikut ter-update otomatis.
+    <i class="fas fa-circle-check me-2"></i>Status pembayaran berhasil diperbarui!
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
 <?php endif; ?>
@@ -279,4 +300,4 @@ include __DIR__ . '/../../includes/sidebar_header.php';
   });
 </script>
 
-<?php include __DIR__ . '/../../includes/penutup_halaman.php';  ?>
+<?php include '../includes/penutup_halaman.php'; ?>

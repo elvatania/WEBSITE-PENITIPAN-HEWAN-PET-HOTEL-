@@ -1,9 +1,9 @@
 <?php
 session_start();
-include "../config/koneksi.php";
+include __DIR__ . "/../../config/koneksi.php";
 
 $id = $_GET['id'] ?? '';
-$data = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM kamar WHERE id_kamar = '$id'"));
+$data = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM kamar WHERE id_kamar = '$id'"));
 
 if (!$data) {
     header("Location: index.php");
@@ -11,12 +11,12 @@ if (!$data) {
 }
 
 if (isset($_POST['update'])) {
-    $nama_kamar     = mysqli_real_escape_string($conn, $_POST['nama_kamar']);
-    $jenis_kamar    = mysqli_real_escape_string($conn, $_POST['jenis_kamar']);
-    $harga_per_hari = mysqli_real_escape_string($conn, $_POST['harga_per_hari']);
-    $kapasitas      = mysqli_real_escape_string($conn, $_POST['kapasitas']); // Diubah ke kapasitas
+    $nama_kamar     = mysqli_real_escape_string($koneksi, $_POST['nama_kamar']);
+    $jenis_kamar    = mysqli_real_escape_string($koneksi, $_POST['jenis_kamar']);
+    $harga_per_hari = mysqli_real_escape_string($koneksi, $_POST['harga_per_hari']);
+    $kapasitas      = mysqli_real_escape_string($koneksi, $_POST['kapasitas']); // Diubah ke kapasitas
 
-    $update = mysqli_query($conn, "UPDATE kamar SET nama_kamar='$nama_kamar', jenis_kamar='$jenis_kamar', harga_per_hari='$harga_per_hari', kapasitas='$kapasitas' WHERE id_kamar='$id'");
+    $update = mysqli_query($koneksi, "UPDATE kamar SET nama_kamar='$nama_kamar', jenis_kamar='$jenis_kamar', harga_per_hari='$harga_per_hari', kapasitas='$kapasitas' WHERE id_kamar='$id'");
 
     if ($update) {
         $_SESSION['toast'] = [

@@ -1,15 +1,15 @@
 <?php
 session_start();
-include "../config/koneksi.php";
+include __DIR__ . "/../../config/koneksi.php";
 
 if (isset($_POST['simpan'])) {
-    $nama_kamar     = mysqli_real_escape_string($conn, $_POST['nama_kamar']);
-    $jenis_kamar    = mysqli_real_escape_string($conn, $_POST['jenis_kamar']);
-    $harga_per_hari = mysqli_real_escape_string($conn, $_POST['harga_per_hari']);
-    $kapasitas      = mysqli_real_escape_string($conn, $_POST['kapasitas']); // Diubah ke kapasitas
+    $nama_kamar     = mysqli_real_escape_string($koneksi, $_POST['nama_kamar']);
+    $jenis_kamar    = mysqli_real_escape_string($koneksi, $_POST['jenis_kamar']);
+    $harga_per_hari = mysqli_real_escape_string($koneksi, $_POST['harga_per_hari']);
+    $kapasitas      = mysqli_real_escape_string($koneksi, $_POST['kapasitas']); // Diubah ke kapasitas
 
     // Query INSERT disesuaikan dengan kolom 'kapasitas'
-    $insert = mysqli_query($conn, "INSERT INTO kamar (nama_kamar, jenis_kamar, harga_per_hari, kapasitas) 
+    $insert = mysqli_query($koneksi, "INSERT INTO kamar (nama_kamar, jenis_kamar, harga_per_hari, kapasitas) 
                                    VALUES ('$nama_kamar', '$jenis_kamar', '$harga_per_hari', '$kapasitas')");
 
     if ($insert) {

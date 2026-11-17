@@ -1,12 +1,12 @@
 <?php
 session_start();
-include "../config/koneksi.php";
+include __DIR__ . "/../../config/koneksi.php";
 
 $id = $_GET['id'] ?? '';
 
 if ($id != '') {
     // 1. Cek apakah kamar masih terikat dengan reservasi (opsional jika ada foreign key, atau langsung hapus)
-    $delete = mysqli_query($conn, "DELETE FROM kamar WHERE id_kamar = '$id'");
+    $delete = mysqli_query($koneksi, "DELETE FROM kamar WHERE id_kamar = '$id'");
 
     if ($delete) {
         $_SESSION['toast'] = [

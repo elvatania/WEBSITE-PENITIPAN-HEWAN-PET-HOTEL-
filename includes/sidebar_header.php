@@ -1,25 +1,22 @@
 <?php
-// Variabel yang diisi dari halaman pemanggil:
-//   $judulHalaman = judul di topbar (contoh: 'Laporan')
-//   $menuAktif    = nama file menu yang aktif (contoh: 'laporan.php')
 $judulHalaman = $judulHalaman ?? 'Dashboard Admin';
-$menuAktif    = $menuAktif ?? '';
-// Kalau halaman ada di dalam subfolder (misal reservasi/index.php),
-// isi $basePath = '../' sebelum include file ini, supaya link & logo tidak rusak.
-$basePath     = $basePath ?? '';
+$menuAktif = $menuAktif ?? '';
+
+$baseUrl = '/WEBSITE-PENITIPAN-HEWAN-PET-HOTEL-';
+$basePath = $basePath ?? '../'; // Fallback aman jika $basePath belum diset
 
 $menuSidebar = [
-    ['dashboard.php',             'fa-house',            'Dashboard'],
-    ['pelanggan/index.php',       'fa-user',             'Pelanggan'],
-    ['hewan/index.php',           'fa-paw',              'Hewan'],
-    ['reservasi/index.php',       'fa-calendar-check',   'Reservasi'],
-    ['riwayat_pesanan_admin.php', 'fa-clock-rotate-left','Riwayat Pesanan'],
-    ['kamar/index.php',           'fa-bed',              'Kamar'],
-    ['layanan.php',               'fa-scissors',         'Layanan'],
-    ['pembayaran.php',            'fa-wallet',           'Pembayaran'],
-    ['laporan.php',               'fa-file-lines',       'Laporan'],
+    ['dashboard.php', 'fa-house', 'Dashboard'], // Diubah langsung ke dashboard.php
+    ['pelanggan/index.php', 'fa-user', 'Pelanggan'], // Kalau pelanggan punya folder sendiri
+    ['hewan/index.php', 'fa-paw', 'Hewan'], // Kalau hewan punya folder sendiri
+    ['reservasi/index.php', 'fa-calendar-check', 'Reservasi'], // Langsung ke reservasi.php sesuai file kamu
+    ['kamar/index.php', 'fa-bed', 'Kamar'], // Kalau kamar punya folder sendiri
+    ['layanan.php', 'fa-scissors', 'Layanan'], // Langsung ke layanan.php
+    ['pembayaran.php', 'fa-wallet', 'Pembayaran'], // Langsung ke pembayaran.php
+    ['laporan.php', 'fa-file-lines', 'Laporan'], // Langsung ke laporan.php
 ];
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -102,7 +99,6 @@ $menuSidebar = [
     </style>
 
     <?php if (!empty($pakaiDataTables)): ?>
-    <!-- ===== Gaya tabel DataTables (aktif kalau $pakaiDataTables = true) ===== -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
     <style>
         .card-custom {
@@ -131,9 +127,7 @@ $menuSidebar = [
             border-color: #6b95b5;
             color: #ffffff;
         }
-
         .dataTables_wrapper { padding: 1.5rem !important; }
-
         .dataTables_wrapper .dataTables_length {
             display: flex;
             align-items: center;
@@ -184,32 +178,30 @@ $menuSidebar = [
 
 <div class="container-fluid">
     <div class="row">
-
-        <!-- ================= SIDEBAR ================= -->
         <div class="col-md-3 col-lg-2 sidebar-wrapper p-3" id="sidebar">
             <div class="text-center py-3 mb-3 border-bottom border-light-subtle">
                 <img src="<?= $basePath; ?>config/assets/images/logo.png" alt="Logo" width="180" class="mb-2 d-block mx-auto img-fluid"
-                     onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/616/616408.png';">
+                    onerror="this.onerror=null; ">
                 <div class="sidebar-brand">Pet Heaven</div>
             </div>
 
             <nav class="nav flex-column">
                 <?php foreach ($menuSidebar as $m): ?>
-                    <a href="<?= $basePath . $m[0]; ?>" class="nav-link <?= ($menuAktif === $m[0]) ? 'active' : ''; ?>">
-                        <i class="fas <?= $m[1]; ?> me-2"></i> <?= $m[2]; ?>
+                    <a href="<?= $baseUrl; ?>/admin/<?= $m[0]; ?>"
+                       class="nav-link <?= ($menuAktif === $m[0]) ? 'active' : ''; ?>">
+                        <i class="fas <?= $m[1]; ?> me-2"></i>
+                        <?= $m[2]; ?>
                     </a>
                 <?php endforeach; ?>
 
-                <a href="<?= $basePath; ?>logout.php" class="nav-link text-danger mt-4">
-                    <i class="fas fa-right-from-bracket me-2"></i> Logout
+                <a href="<?= $baseUrl; ?>/logout.php"
+                   class="nav-link text-danger mt-4">
+                    <i class="fas fa-right-from-bracket me-2"></i>
+                    Logout
                 </a>
             </nav>
-        </div>
-
-        <!-- ================= KONTEN UTAMA ================= -->
+        </div> 
         <div class="col-md-9 col-lg-10 p-4" id="mainContent">
-
-            <!-- HEADER / TOPBAR -->
             <div class="d-flex justify-content-between align-items-center topbar-header p-3 shadow-sm mb-4">
                 <div class="d-flex align-items-center">
                     <button class="btn btn-sm btn-toggle-sidebar me-3" id="menuBtn">
@@ -222,5 +214,3 @@ $menuSidebar = [
                     <span>Admin</span>
                 </div>
             </div>
-
-            <!-- ===== ISI HALAMAN MULAI DI BAWAH INI ===== -->

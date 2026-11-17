@@ -1,5 +1,7 @@
 <?php
-include "../../config/koneksi.php";
+session_start();
+include '../config/koneksi.php';
+$baseUrl = "/WEBSITE-PENITIPAN-HEWAN-PET-HOTEL-"; 
 
 // STATISTIK DATA
 $totalPelanggan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM pelanggan"))['total'] ?? 0;
@@ -172,11 +174,9 @@ $queryData = mysqli_query($koneksi, "
 
 <div class="container-fluid">
     <div class="row">
-
-        <!-- ================= SIDEBAR ================= -->
         <div class="col-md-3 col-lg-2 sidebar-wrapper p-3" id="sidebar">
             <div class="text-center py-3 mb-3 border-bottom border-light-subtle">
-                <img src="config/assets/images/logo.png" alt="Logo" width="180" class="mb-2 d-block mx-auto img-fluid" onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/616/616408.png';">
+                <img src="../config/assets/images/logo.png" alt="Logo" width="180" class="mb-2 d-block mx-auto img-fluid" onerror="this.onerror=null; ">
                 <div class="sidebar-brand">Pet Heaven</div>
             </div>
 
@@ -196,7 +196,7 @@ $queryData = mysqli_query($koneksi, "
                 <a href="kamar/index.php" class="nav-link">
                     <i class="fas fa-bed me-2"></i> Kamar
                 </a>
-                <a href="layanan.php" class="nav-link">
+                <a href="layanan/layanan.php" class="nav-link">
                     <i class="fas fa-scissors me-2"></i> Layanan
                 </a>
                 <a href="pembayaran.php" class="nav-link">

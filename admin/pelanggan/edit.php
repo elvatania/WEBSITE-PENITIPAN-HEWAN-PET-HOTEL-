@@ -1,9 +1,9 @@
 <?php
 session_start();
-include "../config/koneksi.php";
+include __DIR__ . "/../../config/koneksi.php";
 
 $id = $_GET['id'] ?? '';
-$data = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM pelanggan WHERE id_pelanggan = '$id'"));
+$data = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pelanggan WHERE id_pelanggan = '$id'"));
 
 if (!$data) {
     header("Location: index.php");
@@ -11,12 +11,12 @@ if (!$data) {
 }
 
 if (isset($_POST['update'])) {
-    $nama   = mysqli_real_escape_string($conn, $_POST['nama_pelanggan']);
-    $alamat = mysqli_real_escape_string($conn, $_POST['alamat']);
-    $no_telp= mysqli_real_escape_string($conn, $_POST['no_telp']);
-    $email  = mysqli_real_escape_string($conn, $_POST['email']);
+    $nama   = mysqli_real_escape_string($koneksi, $_POST['nama_pelanggan']);
+    $alamat = mysqli_real_escape_string($koneksi, $_POST['alamat']);
+    $no_telp= mysqli_real_escape_string($koneksi, $_POST['no_telp']);
+    $email  = mysqli_real_escape_string($koneksi, $_POST['email']);
 
-    $update = mysqli_query($conn, "UPDATE pelanggan SET nama_pelanggan='$nama', alamat='$alamat', no_telp='$no_telp', email='$email' WHERE id_pelanggan='$id'");
+    $update = mysqli_query($koneksi, "UPDATE pelanggan SET nama_pelanggan='$nama', alamat='$alamat', no_telp='$no_telp', email='$email' WHERE id_pelanggan='$id'");
 
    if ($update) {
     $_SESSION['toast'] = [
