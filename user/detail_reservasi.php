@@ -2,6 +2,7 @@
 session_start();
 date_default_timezone_set('Asia/Jakarta');
 include "../config/koneksi.php";
+
 if (!isset($_SESSION['id_pelanggan'])) {
     header("Location: ../auth/login.php");
     exit();
@@ -9,6 +10,7 @@ if (!isset($_SESSION['id_pelanggan'])) {
 
 $id_pelanggan = (int) $_SESSION['id_pelanggan'];
 $id = (int) ($_GET['id'] ?? 0);
+
 $query = mysqli_query($koneksi, "
     SELECT
         reservasi.*,
@@ -30,8 +32,11 @@ $query = mysqli_query($koneksi, "
 $data = mysqli_fetch_assoc($query);
 
 if (!$data) {
-    die("Data reservasi tidak ditemukan.");
+    echo "<script>alert('Data reservasi tidak ditemukan.'); window.location='index.php';</script>";
+    exit();
 }
+
+// Ambil daftar hewan peliharaan
 $query_hewan = mysqli_query($koneksi, "
     SELECT hewan.nama_hewan, hewan.jenis_hewan
     FROM detail_reservasi
@@ -41,32 +46,28 @@ $query_hewan = mysqli_query($koneksi, "
 ");
 
 $daftar_hewan = [];
-
 while ($hewan = mysqli_fetch_assoc($query_hewan)) {
     $daftar_hewan[] = $hewan['nama_hewan'] . ' (' . $hewan['jenis_hewan'] . ')';
 }
+
 if (empty($daftar_hewan) && !empty($data['id_hewan'])) {
-
     $id_hewan_lama = (int) $data['id_hewan'];
-
     $query_hewan_lama = mysqli_query($koneksi, "
         SELECT nama_hewan, jenis_hewan
         FROM hewan
         WHERE id_hewan = '$id_hewan_lama'
     ");
-
     $hewan_lama = mysqli_fetch_assoc($query_hewan_lama);
-
     if ($hewan_lama) {
         $daftar_hewan[] = $hewan_lama['nama_hewan'] . ' (' . $hewan_lama['jenis_hewan'] . ')';
     }
 }
 
-$str_hewan = !empty($daftar_hewan)
-    ? implode(', ', $daftar_hewan)
-    : 'Belum ada hewan';
-$jumlah_hewan = count($daftar_hewan);
+$str_hewan = !empty($daftar_hewan) ? implode(', ', $daftar_hewan) : 'Belum ada hewan';
+$jumlah_hewan = count($daftar_hewan) > 0 ? count($daftar_hewan) : 1;
+
 $booking_code = "RSV" . str_pad($data['id_reservasi'], 3, "0", STR_PAD_LEFT);
+
 $waktu_reservasi = $data['waktu_reservasi'] ?? null;
 if (!empty($waktu_reservasi)) {
     $tanggal_pesan = date('d-m-Y', strtotime($waktu_reservasi));
@@ -77,20 +78,23 @@ if (!empty($waktu_reservasi)) {
 }
 
 $lama_hari = (int) $data['lama_hari'];
-$harga_per_hari = (int) ($data['harga_kamar'] ?? 0);
-$total_kamar = $harga_per_hari * $lama_hari * $jumlah_hewan;
+$harga_per_hari = (int) ($data['harga_kamar'] ?? 35000);
+
+// Total kamar: jumlah hewan x lama hari x harga per hari
+$total_kamar = $jumlah_hewan * $lama_hari * $harga_per_hari;
+
+// Ambil total layanan tambahan
 $query_total_layanan = mysqli_query($koneksi, "
     SELECT SUM(subtotal) AS total
     FROM detail_layanan
     WHERE id_reservasi = '$id'
 ");
 $data_total_layanan = mysqli_fetch_assoc($query_total_layanan);
-if ($data_total_layanan['total'] !== null) {
-    $total_layanan = (int) $data_total_layanan['total'];
-} else {
-    $total_layanan = (int) ($data['total_layanan'] ?? 0);
-}
+$total_layanan = ($data_total_layanan['total'] !== null) ? (int) $data_total_layanan['total'] : (int) ($data['total_layanan'] ?? 0);
+
 $total_biaya = $total_kamar + $total_layanan;
+
+// Ambil daftar layanan rinci
 $daftar_layanan = [];
 $q_layanan = mysqli_query($koneksi, "
     SELECT 
@@ -107,66 +111,12 @@ $q_layanan = mysqli_query($koneksi, "
     WHERE dl.id_reservasi = '$id'
     ORDER BY h.nama_hewan, l.jenis_layanan
 ");
+
 if ($q_layanan) {
     while ($row = mysqli_fetch_assoc($q_layanan)) {
         $daftar_layanan[] = $row;
     }
 }
-$layanan_per_hewan = [];
-while ($layanan = mysqli_fetch_assoc($q_layanan)) {
-    $nama = $layanan['nama_hewan'];
-
-    $layanan_per_hewan[$nama][] = $layanan;
-}
-
-
-include "../config/koneksi.php";
-
-$id = $_GET['id'] ?? 0;
-$query = mysqli_query($koneksi, "SELECT reservasi.*, pelanggan.*, kamar.* 
-                                 FROM reservasi 
-                                 JOIN pelanggan ON reservasi.id_pelanggan = pelanggan.id_pelanggan 
-                                 LEFT JOIN kamar ON reservasi.id_kamar = kamar.id_kamar 
-                                 WHERE reservasi.id_reservasi = '$id'");
-$data = mysqli_fetch_assoc($query);
-
-if (!$data) {
-    echo "<script>alert('Data tidak ditemukan!'); window.location='index.php';</script>";
-    exit();
-}
-
-$id_pelanggan = $data['id_pelanggan'];
-$check_in = $data['check_in'];
-$check_out = $data['check_out'];
-
-// Ambil daftar hewan peliharaan
-$query_hewan = mysqli_query($koneksi, "SELECT hewan.nama_hewan, hewan.jenis_hewan 
-                                     FROM reservasi 
-                                     JOIN hewan ON reservasi.id_hewan = hewan.id_hewan 
-                                     WHERE reservasi.id_pelanggan = '$id_pelanggan' 
-                                     AND reservasi.check_in = '$check_in' 
-                                     AND reservasi.check_out = '$check_out'");
-$daftar_hewan = [];
-while ($h = mysqli_fetch_assoc($query_hewan)) {
-    $daftar_hewan[] = $h['nama_hewan'] . ' (' . $h['jenis_hewan'] . ')';
-}
-$str_hewan = !empty($daftar_hewan) ? implode(', ', $daftar_hewan) : 'Hewan Peliharaan';
-
-// Ambil data biaya dari database
-$id_reservasi_current = $data['id_reservasi'];
-$query_layanan_total = mysqli_query($koneksi, "SELECT total_layanan FROM reservasi WHERE id_reservasi = '$id_reservasi_current' LIMIT 1");
-$data_layanan = mysqli_fetch_assoc($query_layanan_total);
-$total_layanan = intval($data_layanan['total_layanan'] ?? 0);
-
-$lama_hari = intval($data['lama_hari'] ?? 1);
-$harga_per_hari = intval($data['harga'] ?? $data['harga_kamar'] ?? $data['harga_per_hari'] ?? 35000);
-
-// Kalkulasi Total Kamar yang diperbaiki (menggunakan tanda kali *)
-$total_kamar = $lama_hari * $harga_per_hari;
-
-// Total Keseluruhan Biaya
-$total_biaya = $total_kamar + $total_layanan;
-$booking_code = "RSV" . str_pad($data['id_reservasi'], 3, "0", STR_PAD_LEFT);
 ?>
 
 <!DOCTYPE html>
@@ -175,210 +125,109 @@ $booking_code = "RSV" . str_pad($data['id_reservasi'], 3, "0", STR_PAD_LEFT);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detail Reservasi - Pet Hotel</title>
+    <!-- Bootstrap 5 CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="assets/style.css">
 </head>
 
 <body class="bg-light min-vh-100 d-flex align-items-center justify-content-center p-4">
-<div class="card shadow-lg border-0 rounded-4 p-4 w-100" style="max-width: 750px;">
+<div class="card shadow-lg border-0 rounded-4 p-4 w-100" style="max-width: 650px;">
     <h2 class="h4 fw-bold mb-4 pb-2 border-bottom text-dark d-flex align-items-center gap-2">
         <i class="bi bi-file-text text-success"></i>
         Detail Reservasi Anda
     </h2>
+
     <div class="card bg-light border-0 p-4 rounded-3 mb-4">
-        <div class="d-flex justify-content-between mb-3">
-            <span class="text-muted">Booking Code:</span>
-            <span class="fw-bold text-primary">
-                <?= $booking_code; ?>
-            </span>
+        <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted small">Booking Code:</span>
+            <span class="fw-bold text-primary"><?= $booking_code; ?></span>
         </div>
         <div class="d-flex justify-content-between mb-2">
-          <span class="text-muted small">Tanggal Pemesanan:</span>
-          <span class="fw-semibold"><?= $tanggal_pesan; ?></span>
+            <span class="text-muted small">Tanggal Pemesanan:</span>
+            <span class="fw-semibold"><?= $tanggal_pesan; ?></span>
         </div>
         <div class="d-flex justify-content-between mb-2">
-          <span class="text-muted small">Waktu Pemesanan:</span>
-          <span class="fw-semibold"><?= $jam_pesan; ?></span>
+            <span class="text-muted small">Waktu Pemesanan:</span>
+            <span class="fw-semibold"><?= $jam_pesan; ?></span>
         </div>
-        <div class="d-flex justify-content-between mb-3">
-            <span class="text-muted">Nama Pelanggan:</span>
-            <span class="fw-semibold text-dark">
-                <?= htmlspecialchars($data['nama_pelanggan'] ?? '-'); ?>
-            </span>
+        <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted small">Nama Pelanggan:</span>
+            <span class="fw-semibold text-dark"><?= htmlspecialchars($data['nama_pelanggan'] ?? '-'); ?></span>
         </div>
-        <div class="d-flex justify-content-between mb-3">
-            <span class="text-muted">No. Telepon:</span>
-            <span class="fw-semibold text-dark">
-                <?= htmlspecialchars($data['no_telp'] ?? '-'); ?>
-            </span>
+        <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted small">No. Telepon:</span>
+            <span class="fw-semibold text-dark"><?= htmlspecialchars($data['no_telp'] ?? '-'); ?></span>
         </div>
-        <div class="d-flex justify-content-between align-items-start mb-3">
-            <span class="text-muted">Hewan Peliharaan:</span>
-            <span class="fw-semibold text-success text-end" style="max-width: 65%;">
-                <?= htmlspecialchars($str_hewan); ?>
-            </span>
+        <div class="d-flex justify-content-between align-items-start mb-2">
+            <span class="text-muted small">Hewan Peliharaan:</span>
+            <span class="fw-semibold text-success text-end" style="max-width: 65%;"><?= htmlspecialchars($str_hewan); ?></span>
         </div>
-        <div class="d-flex justify-content-between mb-3">
-            <span class="text-muted">Jumlah Hewan:</span>
-            <span class="fw-semibold text-dark">
-                <?= $jumlah_hewan; ?> Hewan
-            </span>
+        <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted small">Jumlah Hewan:</span>
+            <span class="fw-semibold text-dark"><?= $jumlah_hewan; ?> Hewan</span>
         </div>
-        <div class="d-flex justify-content-between mb-3">
-            <span class="text-muted">Tipe Kamar:</span>
-            <span class="fw-semibold text-dark">
-                <?= htmlspecialchars($data['nama_kamar'] ?? '-'); ?>
-            </span>
+        <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted small">Tipe Kamar:</span>
+            <span class="fw-semibold text-dark"><?= htmlspecialchars($data['nama_kamar'] ?? 'Standard'); ?></span>
         </div>
-        <div class="d-flex justify-content-between mb-3">
-            <span class="text-muted">Durasi Inap:</span>
+        <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted small">Durasi Inap:</span>
             <span class="fw-semibold text-dark text-end">
-                <?= $lama_hari; ?> Hari
-                (<?= $data['check_in']; ?> s/d <?= $data['check_out']; ?>)
+                <?= $lama_hari; ?> Hari (<?= $data['check_in']; ?> s/d <?= $data['check_out']; ?>)
             </span>
         </div>
         <div class="d-flex justify-content-between mb-3">
-            <span class="text-muted">Catatan Khusus:</span>
+            <span class="text-muted small">Catatan Khusus:</span>
             <span class="fw-semibold text-secondary fst-italic text-end" style="max-width: 65%;">
                 <?= htmlspecialchars($data['catatan'] ?: 'Tidak ada catatan'); ?>
             </span>
         </div>
+
         <hr class="text-muted">
+
         <div class="d-flex justify-content-between text-muted small mb-2">
             <span>
-                Total Kamar
-                (<?= $jumlah_hewan; ?> hewan x <?= $lama_hari; ?> hari x
-                Rp<?= number_format($harga_per_hari, 0, ',', '.'); ?>):
+                Total Kamar (<?= $jumlah_hewan; ?> hewan x <?= $lama_hari; ?> hari x Rp<?= number_format($harga_per_hari, 0, ',', '.'); ?>):
             </span>
-            <span class="fw-semibold text-dark">
-                Rp<?= number_format($total_kamar, 0, ',', '.'); ?>
-            </span>
+            <span class="fw-semibold text-dark">Rp<?= number_format($total_kamar, 0, ',', '.'); ?></span>
         </div>
-        <div class="mb-3">
-            <div class="fw-semibold text-dark mb-2">
-                Layanan Tambahan
-            </div>
-            
+
+        <div class="mb-2">
+            <div class="fw-semibold text-dark small mb-1">Layanan Tambahan:</div>
             <?php if (!empty($daftar_layanan)) { ?>
-            <?php foreach ($daftar_layanan as $layanan) { ?>
-            <div class="d-flex justify-content-between align-items-center small mb-2">
-                <span class="text-muted">
-                    <?= htmlspecialchars($layanan['jenis_layanan']); ?>
-                    (<?= htmlspecialchars($layanan['nama_hewan']); ?>)
-                </span>
-                <span class="fw-semibold text-dark">
-                    Rp<?= number_format($layanan['subtotal'], 0, ',', '.'); ?>
-                </span>
-            </div>
-        <?php } ?>
-        
-        <?php } else { ?>
-        
-        <p class="text-muted small fst-italic">
-            Tidak ada layanan tambahan.
-        </p>
-        
-        <?php } ?>
-        
-        <div class="d-flex justify-content-between text-muted small mt-2">
-            <span>Total Layanan Tambahan:</span>
-            <span class="fw-semibold text-dark">
-                Rp<?= number_format($total_layanan, 0, ',', '.'); ?>
-            </span>
+                <?php foreach ($daftar_layanan as $layanan) { ?>
+                    <div class="d-flex justify-content-between align-items-center small text-muted mb-1 ps-2">
+                        <span>- <?= htmlspecialchars($layanan['jenis_layanan']); ?> (<?= htmlspecialchars($layanan['nama_hewan']); ?>)</span>
+                        <span>Rp<?= number_format($layanan['subtotal'], 0, ',', '.'); ?></span>
+                    </div>
+                <?php } ?>
+            <?php } else { ?>
+                <p class="text-muted small fst-italic ps-2 mb-1">Tidak ada layanan tambahan.</p>
+            <?php } ?>
         </div>
-    </div>
+
+        <div class="d-flex justify-content-between text-muted small mb-2">
+            <span>Total Layanan Tambahan:</span>
+            <span class="fw-semibold text-dark">Rp<?= number_format($total_layanan, 0, ',', '.'); ?></span>
+        </div>
+
         <hr class="text-muted">
+
         <div class="d-flex justify-content-between align-items-center mt-2">
             <span class="fw-bold text-secondary">Total Tagihan:</span>
-            <span class="fs-5 fw-bolder text-success">
-                Rp<?= number_format($total_biaya, 0, ',', '.'); ?>
-            </span>
+            <span class="fs-5 fw-bolder text-success">Rp<?= number_format($total_biaya, 0, ',', '.'); ?></span>
         </div>
     </div>
-    <a href="konfirmasi_pembayaran.php?id=<?= $data['id_reservasi']; ?>"
+
+    <a href="konfirmasi_pembayaran.php?id=<?= $data['id_reservasi']; ?>" 
        class="btn btn-primary w-100 py-3 rounded-3 fw-semibold d-flex justify-content-center align-items-center gap-2 shadow-sm">
-        Lanjut ke Konfirmasi Pembayaran
-        <i class="bi bi-arrow-right"></i>
+        Lanjut ke Konfirmasi Pembayaran <i class="bi bi-arrow-right"></i>
     </a>
 </div>
+
+<!-- Bootstrap 5 JS Bundle CDN -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Detail Reservasi - Pet Hotel</title>
-  <!-- Bootstrap 5 CSS CDN -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons CDN -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="assets/style.css">
-</head>
-<body class="bg-light min-vh-100 d-flex align-items-center justify-content-center p-4">
-
-  <div class="card shadow-lg border-0 rounded-4 p-4 w-100" style="max-width: 550px;">
-    <h2 class="h4 fw-bold mb-4 pb-2 border-bottom text-dark d-flex align-items-center gap-2">
-      <i class="bi bi-file-text text-success"></i> Detail Reservasi Anda
-    </h2>
-
-    <div class="card bg-light border-0 p-3 rounded-3 mb-4">
-      <div class="d-flex justify-content-between mb-2">
-        <span class="text-muted small">Booking Code:</span> 
-        <span class="fw-bold text-primary"><?= $booking_code; ?></span>
-      </div>
-      <div class="d-flex justify-content-between mb-2">
-        <span class="text-muted small">Nama Pelanggan:</span> 
-        <span class="fw-semibold text-dark"><?= htmlspecialchars($data['nama_pelanggan'] ?? '-'); ?></span>
-      </div>
-      <div class="d-flex justify-content-between mb-2">
-        <span class="text-muted small">No. Telepon:</span> 
-        <span class="fw-semibold text-dark"><?= htmlspecialchars($data['no_telepon'] ?? $data['no_telp'] ?? '-'); ?></span>
-      </div>
-      
-      <div class="d-flex justify-content-between align-items-start mb-2">
-        <span class="text-muted small">Hewan Peliharaan:</span> 
-        <span class="fw-semibold text-success text-end" style="max-width: 65%;"><?= htmlspecialchars($str_hewan); ?></span>
-      </div>
-
-      <div class="d-flex justify-content-between mb-2">
-        <span class="text-muted small">Tipe Kamar:</span> 
-        <span class="fw-semibold text-dark"><?= htmlspecialchars($data['nama_kamar'] ?? 'Standard'); ?></span>
-      </div>
-      <div class="d-flex justify-content-between mb-2">
-        <span class="text-muted small">Durasi Inap:</span> 
-        <span class="fw-semibold text-dark"><?= $lama_hari; ?> Hari (<?= $data['check_in'] ?? '-'; ?> s/d <?= $data['check_out'] ?? '-'; ?>)</span>
-      </div>
-      
-      <div class="d-flex justify-content-between mb-3">
-        <span class="text-muted small">Catatan Khusus:</span> 
-        <span class="fw-semibold text-secondary fst-italic text-end"><?= htmlspecialchars($data['catatan'] ?? 'Tidak ada catatan'); ?></span>
-      </div>
-      
-      <hr class="text-muted">
-      
-      <div class="d-flex justify-content-between text-muted small mb-1">
-        <span>Total Kamar (<?= $lama_hari; ?> hari x Rp<?= number_format($harga_per_hari, 0, ',', '.'); ?>):</span> 
-        <span>Rp<?= number_format($total_kamar, 0, ',', '.'); ?></span>
-      </div>
-      <div class="d-flex justify-content-between text-muted small mb-2">
-        <span>Total Layanan Tambahan:</span> 
-        <span>Rp<?= number_format($total_layanan, 0, ',', '.'); ?></span>
-      </div>
-      
-      <hr class="text-muted">
-      
-      <div class="d-flex justify-content-between align-items-center mt-2">
-        <span class="fw-bold text-secondary">Total Tagihan:</span> 
-        <span class="fs-5 fw-bolder text-success">Rp<?= number_format($total_biaya, 0, ',', '.'); ?></span>
-      </div>
-    </div>
-
-    <a href="konfirmasi_pembayaran.php?id=<?= $data['id_reservasi']; ?>" class="btn btn-primary w-100 py-3 rounded-3 fw-semibold d-flex justify-content-center align-items-center gap-2 shadow-sm">
-      Lanjut ke Konfirmasi Pembayaran <i class="bi bi-arrow-right"></i>
-    </a>
-  </div>
-
-  <!-- Bootstrap 5 JS Bundle CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

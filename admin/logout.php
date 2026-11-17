@@ -3,7 +3,7 @@ session_start();
 session_unset();
 session_destroy();
 
-// Arahkan kembali ke halaman login utama (sesuaikan path naik satu tingkat keluar dari folder admin)
-header("Location: ../index.php");
+// Mengarahkan kembali ke file landingpage.php (sesuaikan jalur foldernya jika landingpage.php berada di luar folder admin)
+header("Location: ../landingpage.php");
 exit();
 ?>
